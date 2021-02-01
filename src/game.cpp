@@ -21,7 +21,7 @@ void Game::init(void) {
   SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 0);      // setting draw color
   SDL_RenderClear(renderer_);      // Clear the newly created window
   SDL_RenderPresent(renderer_);    // Reflects the changes done in the
-  Player player; 
+  Player player(200, 200); 
   entities_.push_back(player);
 }
 

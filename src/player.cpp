@@ -1,13 +1,19 @@
 #include "player.hpp"
 #include "SDL_render.h"
 
+Player::Player(int x, int y) noexcept {
+  pos.x = x;
+  pos.y = y;
+}
+
+Player::~Player() noexcept {
+}
+
 void Player::Entity::draw(SDL_Renderer *renderer ) {
   const int radius = 50;
 
   // Setting the color to be RED with 100% opaque (0% trasparent).
   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-  pos.x = 200;
-  pos.y = 200;
 
   // Drawing circle
   for(int x=pos.x-radius; x<=pos.x+radius; x++){
