@@ -1,3 +1,5 @@
+
+
 #include "game.hpp"
 
 #include "entity.hpp"
@@ -14,21 +16,22 @@
 #define WIDTH 500
 #define HEIGHT 500
 
-
-void Game::init(void) {
+void Game::init(void)
+{
   SDL_Init(SDL_INIT_VIDEO);
   SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window, &renderer);
-  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);      // setting draw color
-  SDL_RenderClear(renderer);      // Clear the newly created window
-  SDL_RenderPresent(renderer);    // Reflects the changes done in the
-
-  player = new Player(200, 200);
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0); // setting draw color
+  SDL_RenderClear(renderer);                    // Clear the newly created window
+  SDL_RenderPresent(renderer);                  // Reflects the changes done in the
 }
 
-void Game::run(void) {
+void Game::run(void)
+{
+  player = new Player(Point(100, 100));
   is_running = true;
 
-  while (is_running) {
+  while (is_running)
+  {
     handle_event();
     player->update();
     player->draw(renderer);
@@ -41,37 +44,41 @@ void Game::run(void) {
   SDL_Quit();
 }
 
-void Game::handle_keydown(SDL_KeyboardEvent *event) {
-  switch (event->keysym.sym) {
-    case SDLK_ESCAPE:
-      is_running = false;
-    case SDLK_w:
-      player->pos.y -= 10;
-      break;
-    case SDLK_s:
-      player->pos.y += 10;
-      break;
-    case SDLK_a:
-      player->pos.x -= 10;
-      break;
-    case SDLK_d:
-      player->pos.x += 10;
-      break;
-
+void Game::handle_keydown(SDL_KeyboardEvent *event)
+{
+  switch (event->keysym.sym)
+  {
+  case SDLK_ESCAPE:
+    is_running = false;
+  case SDLK_w:
+    player->pos.y -= 10;
+    break;
+  case SDLK_s:
+    player->pos.y += 10;
+    break;
+  case SDLK_a:
+    player->pos.x -= 10;
+    break;
+  case SDLK_d:
+    player->pos.x += 10;
+    break;
   }
 }
 
-void Game::handle_event(void) {
+void Game::handle_event(void)
+{
   SDL_Event event;
-  if (!SDL_PollEvent(&event)) return;
-  switch (event.type) {
-    case SDL_QUIT:
-      is_running = false;
-    case SDL_KEYDOWN:
-      handle_keydown(&event.key);
+  if (!SDL_PollEvent(&event))
+    return;
+  switch (event.type)
+  {
+  case SDL_QUIT:
+    is_running = false;
+  case SDL_KEYDOWN:
+    handle_keydown(&event.key);
   }
 }
 
-void Game::draw(void) {
-
+void Game::draw(void)
+{
 }
