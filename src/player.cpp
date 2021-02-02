@@ -1,15 +1,19 @@
 #include "player.hpp"
 #include "SDL_render.h"
+#include "entity.hpp"
 
-Player::Player(int x, int y) noexcept {
+Player::Player( int x, int y ) noexcept {
   pos.x = x;
   pos.y = y;
 }
 
-Player::~Player() noexcept {
+Player::~Player() noexcept {}
+
+void Player::Entity::update() {
+  pos.x += 1;
 }
 
-void Player::Entity::draw(SDL_Renderer *renderer ) {
+void Player::Entity::draw( SDL_Renderer *renderer ) {
   const int radius = 50;
 
   // Setting the color to be RED with 100% opaque (0% trasparent).

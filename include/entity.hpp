@@ -10,6 +10,7 @@ struct Position {
 class Entity {
   public:
     virtual void draw(SDL_Renderer *renderer);
+    virtual void update();
   protected:
     Position pos;
 };

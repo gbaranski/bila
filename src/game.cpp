@@ -17,27 +17,26 @@
 
 void Game::init(void) {
   SDL_Init(SDL_INIT_VIDEO);
-  SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window_, &renderer_);
-  SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 0);      // setting draw color
-  SDL_RenderClear(renderer_);      // Clear the newly created window
-  SDL_RenderPresent(renderer_);    // Reflects the changes done in the
-  Player player(200, 200); 
-  entities_.push_back(player);
+  SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window, &renderer);
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);      // setting draw color
+  SDL_RenderClear(renderer);      // Clear the newly created window
+  SDL_RenderPresent(renderer);    // Reflects the changes done in the
+
+  player = new Player(200, 200);
 }
 
 void Game::run(void) {
-  is_running_ = true;
+  is_running = true;
 
-  while (is_running_) {
+  while (is_running) {
     handle_event();
-    for (Entity entity : entities_) {
-      entity.draw(renderer_);
-    }
+    player->update();
+    player->draw(renderer);
     SDL_Delay(16);
   }
 
-  SDL_DestroyWindow(window_);
-  SDL_DestroyRenderer(renderer_);
+  SDL_DestroyWindow(window);
+  SDL_DestroyRenderer(renderer);
 
   SDL_Quit();
 }
@@ -45,7 +44,7 @@ void Game::run(void) {
 void Game::handle_keydown(SDL_KeyboardEvent *event) {
   switch (event->keysym.sym) {
     case SDLK_ESCAPE:
-      is_running_ = false;
+      is_running = false;
   }
 }
 
@@ -54,7 +53,7 @@ void Game::handle_event(void) {
   if (!SDL_PollEvent(&event)) return;
   switch (event.type) {
     case SDL_QUIT:
-      is_running_ = false;
+      is_running = false;
     case SDL_KEYDOWN:
       handle_keydown(&event.key);
   }
