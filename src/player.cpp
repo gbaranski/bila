@@ -10,11 +10,14 @@ Player::Player( int x, int y ) noexcept {
 Player::~Player() noexcept {}
 
 void Player::Entity::update() {
-  pos.x += 1;
 }
 
 void Player::Entity::draw( SDL_Renderer *renderer ) {
   const int radius = 50;
+
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+  SDL_RenderClear(renderer);
+
 
   // Setting the color to be RED with 100% opaque (0% trasparent).
   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);

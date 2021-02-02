@@ -45,6 +45,19 @@ void Game::handle_keydown(SDL_KeyboardEvent *event) {
   switch (event->keysym.sym) {
     case SDLK_ESCAPE:
       is_running = false;
+    case SDLK_w:
+      player->pos.y -= 10;
+      break;
+    case SDLK_s:
+      player->pos.y += 10;
+      break;
+    case SDLK_a:
+      player->pos.x -= 10;
+      break;
+    case SDLK_d:
+      player->pos.x += 10;
+      break;
+
   }
 }
 
