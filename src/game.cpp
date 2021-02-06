@@ -27,7 +27,7 @@ void Game::init(void)
 
 void Game::run(void)
 {
-  player = new Player(Point(100, 100));
+  player = new Player();
   is_running = true;
 
   while (is_running)

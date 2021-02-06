@@ -9,6 +9,7 @@ public:
   virtual void draw(SDL_Renderer *renderer);
   virtual void update();
   Point pos;
+  Point vel;
 
 protected:
   int mass;

@@ -5,6 +5,6 @@
 class Player : public Entity
 {
 public:
-  Player(Point _pos) noexcept;
+  Player() noexcept;
   ~Player() noexcept;
 };

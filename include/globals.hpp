@@ -2,10 +2,10 @@
 
 struct Point
 {
-  int x;
-  int y;
+  float x;
+  float y;
 
   Point();
 
-  Point(int _x, int _y);
+  Point(float _x, float _y);
 };
