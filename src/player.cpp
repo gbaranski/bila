@@ -1,30 +1,47 @@
 #include "player.hpp"
-#include "SDL_render.h"
+
+#include <algorithm>
+
+#include <SDL_render.h>
 #include "entity.hpp"
 #include "globals.hpp"
 
-Player::Player() noexcept
+static const int player_radius = 50;
+
+Player::Player(World *_world, Point _position) noexcept
 {
   mass = 100;
-  pos = Point(100, 100);
-  vel = Point(10, 0);
+  position = _position;
+  velocity = Point(0, 0);
+  world = _world;
 }
 
 Player::~Player() noexcept
 {
 }
 
-void Player::Entity::update()
+void Player::Entity::update(float seconds_passed)
 {
-  pos.x += vel.x;
-  pos.y += vel.y;
-  
+  float distance_to_ground = world->height - position.y + (velocity.y * seconds_passed)  - player_radius; 
+
+
+  if (distance_to_ground == 0) {
+    // Check if is on the same level as ground
+    velocity.y = 0;
+  } else if (distance_to_ground < 0) {
+    // Set Y velocity to distance to ground, so if he is below ground he will just pop out
+    velocity.y = distance_to_ground;
+  } else {
+    // Set velocity to make object fall
+    velocity.y += world->gravity * seconds_passed;
+  }
+
+  position.x += velocity.x * seconds_passed;
+  position.y += velocity.y * seconds_passed;
 }
 
 void Player::Entity::draw( SDL_Renderer *renderer )
 {
-  const int radius = 50;
-
   SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
   SDL_RenderClear( renderer );
 
@@ -32,11 +49,11 @@ void Player::Entity::draw( SDL_Renderer *renderer )
   SDL_SetRenderDrawColor( renderer, 255, 0, 0, 255 );
 
   // Drawing circle
-  for ( int x = pos.x - radius; x <= pos.x + radius; x++ )
+  for ( int x = position.x - player_radius; x <= position.x + player_radius; x++ )
   {
-    for ( int y = pos.y - radius; y <= pos.y + radius; y++ )
+    for ( int y = position.y - player_radius; y <= position.y + player_radius; y++ )
     {
-      if ( ( pow( pos.y - y, 2 ) + pow( pos.x - x, 2 ) ) <= pow( radius, 2 ) )
+      if ( ( pow( position.y - y, 2 ) + pow( position.x - x, 2 ) ) <= pow( player_radius, 2 ) )
       {
         SDL_RenderDrawPoint( renderer, x, y );
       }
@@ -46,3 +63,20 @@ void Player::Entity::draw( SDL_Renderer *renderer )
   // Show the change on the screen
   SDL_RenderPresent( renderer );
 }
+
+void Player::jump() noexcept {
+  printf("jump\n");
+  position.y -= 1;
+  velocity.y = -30;
+}
+
+void Player::moveLeft() noexcept {
+  printf("move left\n");
+  position.x -= 10;
+}
+
+void Player::moveRight() noexcept {
+  printf("move right\n");
+  position.x += 10;
+}
+

@@ -1,10 +1,11 @@
 #pragma once
 
 #include <vector>
+#include <SDL_events.h>
+#include <SDL_render.h>
+#include <SDL_video.h>
+
 #include "player.hpp"
-#include "SDL_events.h"
-#include "SDL_render.h"
-#include "SDL_video.h"
 
 class Game
 {
@@ -19,6 +20,7 @@ private:
   SDL_Window *window;
   SDL_Renderer *renderer;
 
+  World *world;
   Player *player;
   bool is_running;
 };
