@@ -4,8 +4,7 @@
 #include <SDL_events.h>
 #include <SDL_render.h>
 #include <SDL_video.h>
-
-#include "player.hpp"
+#include "ball.hpp"
 
 class Game
 {
@@ -14,13 +13,13 @@ public:
   void run(void);
 
 private:
-  void handle_event(void);
-  void handle_keydown(SDL_KeyboardEvent *event);
+  void handle_event( void );
+  void handle_keydown( SDL_KeyboardEvent *event );
   void draw();
-  SDL_Window *window;
-  SDL_Renderer *renderer;
+  SDL_Window *window_;
+  SDL_Renderer *renderer_;
 
-  World *world;
-  Player *player;
-  bool is_running;
+  Ball ball_;
+
+  bool is_running_;
 };

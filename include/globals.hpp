@@ -9,3 +9,11 @@ struct Point
 
   Point(float _x, float _y);
 };
+
+enum Side {
+  Left,
+  Right,
+  Top,
+  Bottom,
+  None,
+};
