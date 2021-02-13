@@ -11,7 +11,7 @@ class Ball {
     const int radius = 50;
     const float friction = 0.5;
     
-    const Point max_velocity = Point(5, 5);
+    const Point max_velocity = Point(3, 3);
 
   public:
     void draw(SDL_Renderer *renderer);
