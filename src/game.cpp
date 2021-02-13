@@ -16,13 +16,15 @@
 
 #define FPS 60
 
-void Game::init(void)
+Game::Game() noexcept : ball( Size( WIDTH, HEIGHT ) ) {}
+
+void Game::init()
 {
   SDL_Init( SDL_INIT_VIDEO );
-  SDL_CreateWindowAndRenderer( WIDTH, HEIGHT, 0, &window, &renderer );
-  SDL_SetRenderDrawColor( renderer, 0, 0, 0, 0 ); // setting draw color
-  SDL_RenderClear( renderer );                    // Clear the newly created window
-  SDL_RenderPresent( renderer );                  // Reflects the changes done in the
+  if ( SDL_CreateWindowAndRenderer( WIDTH, HEIGHT, 0, &window, &renderer ) != 0 ) throw SDL_GetError();
+  if ( SDL_SetRenderDrawColor( renderer, 0, 0, 0, 0 ) != 0 ) throw SDL_GetError();
+  if ( SDL_RenderClear( renderer ) != 0 ) throw SDL_GetError();
+  SDL_RenderPresent( renderer );
 }
 
 void Game::run(void)

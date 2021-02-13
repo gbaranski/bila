@@ -8,10 +8,12 @@ class Ball {
     Point position;
     Point velocity;
     Point acceleration;
-    const int radius = 50;
-    const float friction = 0.5;
-    
+
+    const int   radius       = 50;
+    const float friction     = 0.5;
+    const int   mass         = 10;
     const Point max_velocity = Point(3, 3);
+    Size window_size;
 
   public:
     void draw(SDL_Renderer *renderer);
@@ -23,9 +25,11 @@ class Ball {
     void reset_x();
     void reset_y();
 
-    Ball() {
-      position = Point(radius, radius);
-      velocity = Point(0,0);
+    Ball(Size window_size_) {
+      window_size  = window_size_;
+
+      position     = Point(radius, radius);
+      velocity     = Point(0,0);
       acceleration = Point(0,0);
     };
 };

@@ -9,6 +9,7 @@
 class Game
 {
 public:
+  Game() noexcept;
   void init(void);
   void run(void);
 
