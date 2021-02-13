@@ -31,31 +31,27 @@ void Ball::update( float seconds_passed ) {
   if      ( velocity.y > max_velocity.y ) velocity.y = max_velocity.y;
   else if ( velocity.y < -max_velocity.y ) velocity.y = -max_velocity.y;
 
+  // Detect collision on Y axis walls, if collides prevent overflow
+  if ( position.y + radius + (velocity.y * seconds_passed) > window_size.height ) {
+    // Prevent bottom wall overflow
+    position.y += window_size.height - (position.y + radius + (velocity.y * seconds_passed));
+  } else if ( radius - (position.y + (velocity.y * seconds_passed) ) > 0 ) {
+    // Prevent top wall overflow
+    position.y += radius - (position.y + (velocity.y * seconds_passed));
+  }
+
+  // Detect collision on X axis walls, if collides prevent overflow
+  if ( position.x + radius + (velocity.x * seconds_passed) > window_size.width ) {
+    // Prevent left wall overflow
+    position.x += window_size.width - (position.x + radius + (velocity.x * seconds_passed));
+  } else if ( radius - (position.x + (velocity.x * seconds_passed) ) > 0 ) {
+    // Prevent right wall overflow
+    position.x += radius - (position.x + (velocity.x * seconds_passed));
+  }
 
   position.x += velocity.x * seconds_passed;
   position.y += velocity.y * seconds_passed;
 
-}
-
-void Ball::push_up() {
-  acceleration.y = -0.1;
-}
-void Ball::push_down() {
-  acceleration.y = 0.1;
-}
-void Ball::push_left() {
-  acceleration.x = -0.1;
-}
-void Ball::push_right() {
-  acceleration.x = 0.1;
-}
-
-void Ball::reset_x() {
-  acceleration.x = 0;
-}
-
-void Ball::reset_y() {
-  acceleration.y = 0;
 }
 
 void Ball::draw( SDL_Renderer* renderer ) {

@@ -63,13 +63,19 @@ void Game::handle_keydown( SDL_KeyboardEvent *event )
   else if ( event->keysym.sym == SDLK_d )      ball.push_right();
   else if ( event->keysym.sym == SDLK_w )      ball.push_up();
   else if ( event->keysym.sym == SDLK_s )      ball.push_down();
+  else if ( event->keysym.sym == SDLK_r )      ball.reset_pos(); 
   else if ( event->keysym.sym == SDLK_ESCAPE ) is_running = false;
+  // Just for testing
+  else if ( event->keysym.sym == SDLK_LEFT )   ball.position.x -= 10;
+  else if ( event->keysym.sym == SDLK_RIGHT )  ball.position.x += 10;
+  else if ( event->keysym.sym == SDLK_UP )     ball.position.y -= 10;
+  else if ( event->keysym.sym == SDLK_DOWN )   ball.position.y += 10;
 }
 
 void Game::handle_keyup( SDL_KeyboardEvent *event )
 {
-  if      ( event->keysym.sym == SDLK_a || event->keysym.sym == SDLK_d ) ball.reset_x();
-  else if ( event->keysym.sym == SDLK_w || event->keysym.sym == SDLK_s ) ball.reset_y();
+  if      ( event->keysym.sym == SDLK_a || event->keysym.sym == SDLK_d ) ball.reset_acceleration_x();
+  else if ( event->keysym.sym == SDLK_w || event->keysym.sym == SDLK_s ) ball.reset_acceleration_y();
 }
 
 void Game::handle_event(  ) {
