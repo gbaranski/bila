@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5) 
-project(bounce_tales)
+project(openbilliard)
 
 find_package(SDL2 REQUIRED)
 file(GLOB SOURCES "src/*.cpp")
