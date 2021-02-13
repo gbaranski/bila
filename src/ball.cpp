@@ -15,13 +15,14 @@ void Ball::update( float seconds_passed ) {
 
   velocity.x += acceleration.x * seconds_passed;
 
-  // fix velocity if its above maximum value
-  if      ( velocity.x > 0 && velocity.x > max_velocity.x )  velocity.x =  max_velocity.x;
-  else if ( velocity.x < 0 && velocity.x < -max_velocity.x ) velocity.x = -max_velocity.x;
-
   // add some friction to velocity
   if      ( velocity.x > 0 ) velocity.x = std::max(velocity.x - friction, 0.0f);
-  else if ( velocity.x < 0 ) velocity.x = std::min(velocity.x + friction, 0.0f);
+  else if ( velocity.x < 0 ) velocity.x = std::min(velocity.x + friction, 0.00f);
+
+  // fix velocity if its above maximum value
+  if      ( velocity.x > max_velocity.x ) velocity.x = max_velocity.x;
+  else if ( velocity.x < -max_velocity.x ) velocity.x = -max_velocity.x;
+
 
   position.x += velocity.x * seconds_passed;
   position.y += velocity.y * seconds_passed;
