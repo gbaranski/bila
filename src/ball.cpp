@@ -1,22 +1,52 @@
 #include "ball.hpp"
 
+#include <algorithm>
+
 void Ball::update( float seconds_passed ) {
-  position_.y += velocity_.y * seconds_passed;
-  position_.x += velocity_.x * seconds_passed;
+  // for debugging
+  system("clear");
+  printf("x: %f\n", position.x);
+  printf("y: %f\n", position.y);
+  printf("vx: %f\n", velocity.x);
+  printf("vy: %f\n", velocity.y);
+  printf("ax: %f\n", acceleration.x);
+  printf("ay: %f\n", acceleration.y);
+  printf("s: %f\n", seconds_passed);
+
+  velocity.x += acceleration.x * seconds_passed;
+
+  // fix velocity if its above maximum value
+  if      ( velocity.x > 0 && velocity.x > max_velocity.x )  velocity.x =  max_velocity.x;
+  else if ( velocity.x < 0 && velocity.x < -max_velocity.x ) velocity.x = -max_velocity.x;
+
+  // add some friction to velocity
+  if      ( velocity.x > 0 ) velocity.x = std::max(velocity.x - friction, 0.0f);
+  else if ( velocity.x < 0 ) velocity.x = std::min(velocity.x + friction, 0.0f);
+
+  position.x += velocity.x * seconds_passed;
+  position.y += velocity.y * seconds_passed;
 
 }
 
 void Ball::push_up() {
-  velocity_.y = -1;
+  acceleration.y = 0.1;
 }
 void Ball::push_down() {
-  velocity_.y = 1;
+  acceleration.y = -0.1;
 }
 void Ball::push_left() {
-  velocity_.x = -1;
+  acceleration.x = -0.1;
 }
 void Ball::push_right() {
-  velocity_.x = 1;
+  acceleration.x = 0.1;
+}
+
+void Ball::reset_x() {
+  acceleration.x = 0;
+}
+
+void Ball::reset_y() {
+  acceleration.y = 0;
 }
 
 void Ball::draw( SDL_Renderer* renderer ) {
@@ -27,11 +57,11 @@ void Ball::draw( SDL_Renderer* renderer ) {
   SDL_SetRenderDrawColor( renderer, 255, 0, 0, 255 );
 
   // Drawing circle
-  for ( int x = position_.x - radius_; x <= position_.x + radius_; x++ )
+  for ( int x = position.x - radius; x <= position.x + radius; x++ )
   {
-    for ( int y = position_.y - radius_; y <= position_.y + radius_; y++ )
+    for ( int y = position.y - radius; y <= position.y + radius; y++ )
     {
-      if ( ( pow( position_.y - y, 2 ) + pow( position_.x - x, 2 ) ) <= pow( radius_, 2 ) )
+      if ( ( pow( position.y - y, 2 ) + pow( position.x - x, 2 ) ) <= pow( radius, 2 ) )
       {
         SDL_RenderDrawPoint( renderer, x, y );
       }

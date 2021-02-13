@@ -15,11 +15,12 @@ public:
 private:
   void handle_event( void );
   void handle_keydown( SDL_KeyboardEvent *event );
+  void handle_keyup( SDL_KeyboardEvent *event );
   void draw();
-  SDL_Window *window_;
-  SDL_Renderer *renderer_;
+  SDL_Window *window;
+  SDL_Renderer *renderer;
 
-  Ball ball_;
+  Ball ball;
 
-  bool is_running_;
+  bool is_running;
 };
