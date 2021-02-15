@@ -1,5 +1,3 @@
-#include <cstdio>
-#include <stdio.h>
 #include "game.hpp"
 
 int main() {
