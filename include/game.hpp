@@ -17,11 +17,12 @@ private:
   void handle_event( void );
   void handle_keydown( SDL_KeyboardEvent *event );
   void handle_keyup( SDL_KeyboardEvent *event );
+  void handle_balls_collision( Ball& b1, Ball& b2 );
   void draw();
   SDL_Window *window;
   SDL_Renderer *renderer;
 
-  Ball ball;
+  std::vector<Ball> balls;
 
   bool is_running;
 };

@@ -1,25 +1,22 @@
 #pragma once
 
 #include <SDL_render.h>
+#include <vector>
 #include "globals.hpp"
+#include "types.hpp"
 
 class Ball {
-  private:
-    Point velocity;
-    Point acceleration;
-
-    const int   radius       = 50;
-    const float friction     = 0.1;
-    const int   mass         = 10;
-    const float push_factor  = 0.1;
-    const Point max_velocity = Point(3, 3);
-    Size window_size;
-
   public:
-    // TODO: Change position accessor to private!
+    const u32   radius       = 50;
+    const f32   friction     = 0.1;
+    const u32   mass         = 10;
+    const f32   push_factor  = 0.1;
+    const Point max_velocity = Point(3, 3);
+
     Point position;
+
     void draw(SDL_Renderer *renderer);
-    void update(float seconds_passed);
+    void update(f32 seconds_passed);
     void push_up() {
       acceleration.y -= push_factor;
     };
@@ -44,11 +41,28 @@ class Ball {
       position.y = window_size.height / 2.0f;
     }
 
-    Ball(Size window_size_) {
+    Ball(Size window_size_, std::vector<Ball> *balls_) {
+      balls = balls_;
       window_size  = window_size_;
       velocity     = Point(0,0);
       acceleration = Point(0,0);
 
       reset_pos();
     };
+
+  private:
+    void update_friction();
+    void update_position( f32 delta_time );
+    void update_velocity( f32 delta_time );
+    std::vector<Side> get_wall_collisions( Point new_pos );
+    void handle_wall_collisions( f32 delta_time );
+    void limit_velocity( );
+    std::pair<Side, Side> get_wall_collision( Point new_pos );
+
+    Point velocity;
+    Point acceleration;
+    bool colliding;
+    Size window_size;
+    std::vector<Ball> *balls;
+
 };
