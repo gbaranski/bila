@@ -101,17 +101,9 @@ void Ball::draw( SDL_Renderer* renderer ) {
 
   while (x >= y)
   {
-
-    // top
     SDL_RenderDrawLine(renderer, position.x - y, position.y - x, position.x + y, position.y - x);
-
-    // top-center piece
     SDL_RenderDrawLine(renderer, position.x - x, position.y - y, position.x + x, position.y - y);
-
-    // lower-center piece
     SDL_RenderDrawLine(renderer, position.x - x, position.y + y, position.x + x, position.y + y);
-
-    // lower piece
     SDL_RenderDrawLine(renderer, position.x - y, position.y + x, position.x + y, position.y + x);
 
     if (error <= 0)
