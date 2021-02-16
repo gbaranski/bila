@@ -94,15 +94,41 @@ void Ball::update( float delta_time ) {
 }
 
 void Ball::draw( SDL_Renderer* renderer ) {
-  // Drawing circle
-  for ( int x = position.x - radius; x <= position.x + radius; x++ )
+  const int diameter = (radius * 2);
+
+  int x = (radius - 1);
+  int y = 0;
+  int tx = 1;
+  int ty = 1;
+  int error = (tx - diameter);
+
+  while (x >= y)
   {
-    for ( int y = position.y - radius; y <= position.y + radius; y++ )
+
+    // top
+    SDL_RenderDrawLine(renderer, position.x - y, position.y - x, position.x + y, position.y - x);
+
+    // top-center piece
+    SDL_RenderDrawLine(renderer, position.x - x, position.y - y, position.x + x, position.y - y);
+
+    // lower-center piece
+    SDL_RenderDrawLine(renderer, position.x - x, position.y + y, position.x + x, position.y + y);
+
+    // lower piece
+    SDL_RenderDrawLine(renderer, position.x - y, position.y + x, position.x + y, position.y + x);
+
+    if (error <= 0)
     {
-      if ( ( pow( position.y - y, 2 ) + pow( position.x - x, 2 ) ) <= pow( radius, 2 ) )
-      {
-        SDL_RenderDrawPoint( renderer, x, y );
-      }
+      ++y;
+      error += ty;
+      ty += 2;
+    }
+
+    if (error > 0)
+    {
+      --x;
+      tx += 2;
+      error += (tx - diameter);
     }
   }
 }
