@@ -83,14 +83,11 @@ void Ball::handle_wall_collisions( float delta_time )
 
 
 void Ball::update( float delta_time ) {
-  system("clear");
   update_velocity( delta_time );
   update_friction();
   limit_velocity();
   handle_wall_collisions( delta_time );
   update_position( delta_time );
-  printf("x: %f\n", position.x);
-  printf("y: %f\n", position.y);
 }
 
 void Ball::draw( SDL_Renderer* renderer ) {
