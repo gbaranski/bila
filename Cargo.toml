@@ -7,3 +7,6 @@ edition = "2018"
 
 [dependencies]
 macroquad = "0.3.9"
+
+[profile.dev.package."*"]
+opt-level = 1
