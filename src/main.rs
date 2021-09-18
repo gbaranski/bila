@@ -19,6 +19,10 @@ const PRIMARY_TEXT_COLOR: Color = BLUE;
 const SECONDARY_BALL_COLOR: Color = BLUE;
 const SECONDARY_TEXT_COLOR: Color = RED;
 
+const STATS_TEXT_FONT_SIZE: u16 = 32;
+const STATS_TEXT_FONT_COLOR: Color = WHITE;
+const STATS_TEXT_FONT_SCALE: f32 = 1.0;
+
 #[macroquad::main("bila")]
 async fn main() {
     let font = {
@@ -83,7 +87,30 @@ async fn main() {
         }
 
         primary_ball.update();
+        let primary_ball_position = primary_ball.position();
+        let text = format!(
+            "POS: ({}, {})",
+            primary_ball_position.x, primary_ball_position.y
+        );
 
+        let size = measure_text(
+            &text,
+            Some(font),
+            STATS_TEXT_FONT_SIZE,
+            STATS_TEXT_FONT_SCALE,
+        );
+        draw_text_ex(
+            &text,
+            0.0,
+            size.height,
+            TextParams {
+                font,
+                font_size: STATS_TEXT_FONT_SIZE,
+                font_scale: STATS_TEXT_FONT_SCALE,
+                font_scale_aspect: 1.0,
+                color: STATS_TEXT_FONT_COLOR,
+            },
+        );
         next_frame().await;
     }
 }
