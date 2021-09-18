@@ -10,14 +10,16 @@ const MAX_VELOCITY: f32 = 10.0;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Ball {
+    pub id: usize,
     position: Position,
     velocity: Velocity,
     acceleration: Acceleration,
 }
 
 impl Ball {
-    pub fn new(x: f32, y: f32) -> Self {
+    pub fn new(id: usize, x: f32, y: f32) -> Self {
         Self {
+            id,
             position: Position { x, y },
             velocity: Velocity { x: 0.0, y: 0.0 },
             acceleration: Acceleration { x: 0.0, y: 0.0 },
