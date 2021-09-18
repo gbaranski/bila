@@ -13,14 +13,14 @@ const PRIMARY_TEXT_COLOR: Color = BLUE;
 const SECONDARY_BALL_COLOR: Color = BLUE;
 const SECONDARY_TEXT_COLOR: Color = RED;
 
-const STATS_TEXT_FONT_SIZE: u16 = 32;
-const STATS_TEXT_FONT_COLOR: Color = WHITE;
-const STATS_TEXT_FONT_SCALE: f32 = 1.0;
+const STATS_LINE_SPACING: f32 = 10.0;
+const STATS_FONT_SIZE: u16 = 24;
+const STATS_FONT_COLOR: Color = WHITE;
+const STATS_FONT_SCALE: f32 = 1.0;
 
 pub struct World {
     font: Font,
     balls: [Ball; BALL_COUNT],
-    running: bool,
 }
 
 impl World {
@@ -38,7 +38,6 @@ impl World {
         Self {
             font,
             balls: balls.try_into().unwrap(),
-            running: true,
         }
     }
 
@@ -82,30 +81,31 @@ impl World {
     }
 
     fn draw_stats(&self, tick: usize) {
-        let primary_ball_position = self.primary_ball().position();
-        let text = format!(
-            "POS: ({}, {})",
-            primary_ball_position.x, primary_ball_position.y
-        );
-
-        let size = measure_text(
-            &text,
-            Some(self.font),
-            STATS_TEXT_FONT_SIZE,
-            STATS_TEXT_FONT_SCALE,
-        );
-        draw_text_ex(
-            &text,
-            0.0,
-            size.height,
-            TextParams {
-                font: self.font,
-                font_size: STATS_TEXT_FONT_SIZE,
-                font_scale: STATS_TEXT_FONT_SCALE,
-                font_scale_aspect: 1.0,
-                color: STATS_TEXT_FONT_COLOR,
-            },
-        );
+        let mut current_y = 0.0;
+        let mut draw_line = |s: &str| {
+            let size = measure_text(&s, Some(self.font), STATS_FONT_SIZE, STATS_FONT_SCALE);
+            draw_text_ex(
+                &s,
+                0.0,
+                current_y + size.height,
+                TextParams {
+                    font: self.font,
+                    font_size: STATS_FONT_SIZE,
+                    font_scale: STATS_FONT_SCALE,
+                    font_scale_aspect: 1.0,
+                    color: STATS_FONT_COLOR,
+                },
+            );
+            current_y += size.height + STATS_LINE_SPACING;
+        };
+        let primary_ball = self.primary_ball();
+        let position = primary_ball.position();
+        let acceleration = primary_ball.acceleration();
+        let velocity = primary_ball.velocity();
+        draw_line(&format!("tick: {}", tick));
+        draw_line(&format!("pos: ({}, {})", position.x, position.y));
+        draw_line(&format!("acc: ({} {})", acceleration.x, acceleration.y));
+        draw_line(&format!("vel: ({} {})", velocity.x, velocity.y));
     }
 
     fn handle_keys(&mut self) {

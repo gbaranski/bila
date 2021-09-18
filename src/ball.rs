@@ -31,6 +31,16 @@ impl Ball {
         &self.position
     }
 
+    #[inline]
+    pub fn velocity(&self) -> &Velocity {
+        &self.velocity
+    }
+
+    #[inline]
+    pub fn acceleration(&self) -> &Acceleration {
+        &self.acceleration
+    }
+
     pub fn update(&mut self) {
         // Apply acceleration
         self.velocity.x += self.acceleration.x;
