@@ -1,10 +1,12 @@
 mod ball;
 mod fonts;
-mod utils;
+mod misc;
 
 use ball::Ball;
-use utils::Position;
-use utils::Velocity;
+use misc::Acceleration;
+use misc::Position;
+use misc::Side;
+use misc::Velocity;
 
 use macroquad::prelude::*;
 
