@@ -3,10 +3,9 @@ use crate::Position;
 use crate::Side;
 use crate::Velocity;
 
-const FRICTION: f32 = 0.1;
-const MASS: f32 = 10.0;
-const PUSH_FACTOR: f32 = 90.0;
-const MAX_VELOCITY: f32 = 10.0;
+const FRICTION: f32 = 0.5;
+const PUSH_FACTOR: f32 = 1.0;
+const MAX_SPEED: f32 = 10.0;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Ball {
@@ -41,40 +40,44 @@ impl Ball {
         &self.acceleration
     }
 
+    pub fn reset_acceleration(&mut self) {
+        self.acceleration.x = 0.0;
+        self.acceleration.y = 0.0;
+    }
+
     pub fn update(&mut self) {
         // Apply acceleration
-        self.velocity.x += self.acceleration.x;
-        self.velocity.y += self.acceleration.y;
+        {
+            self.velocity.x += self.acceleration.x;
+            self.velocity.y += self.acceleration.y;
+        }
 
         // Apply friction
-        if self.velocity.x > 0.0 {
-            self.velocity.x = (self.velocity.x - FRICTION).max(0.0)
-        } else if self.velocity.x < 0.0 {
-            self.velocity.x = (self.velocity.x + FRICTION).max(0.0)
+        {
+            if self.velocity.x > 0.0 {
+                self.velocity.x += -FRICTION;
+            } else if self.velocity.x < 0.0 {
+                self.velocity.x += FRICTION;
+            }
+
+            if self.velocity.y > 0.0 {
+                self.velocity.y += -FRICTION;
+            } else if self.velocity.y < 0.0 {
+                self.velocity.y += FRICTION;
+            }
         }
 
-        if self.velocity.y > 0.0 {
-            self.velocity.y = (self.velocity.y - FRICTION).max(0.0)
-        } else if self.velocity.y < 0.0 {
-            self.velocity.y = (self.velocity.y + FRICTION).max(0.0)
-        }
-
-        // Slow down if velocity exceeds MAX_VELOCITY
-        if self.velocity.x > MAX_VELOCITY {
-            self.velocity.x = MAX_VELOCITY;
-        } else if self.velocity.x < -MAX_VELOCITY {
-            self.velocity.x = -MAX_VELOCITY;
-        }
-
-        if self.velocity.y > MAX_VELOCITY {
-            self.velocity.y = MAX_VELOCITY;
-        } else if self.velocity.y < -MAX_VELOCITY {
-            self.velocity.y = -MAX_VELOCITY;
+        // Limit the velocity
+        {
+            self.velocity.x = self.velocity.x.clamp(-MAX_SPEED, MAX_SPEED);
+            self.velocity.y = self.velocity.y.clamp(-MAX_SPEED, MAX_SPEED);
         }
 
         // Update position
-        self.position.x += self.velocity.x;
-        self.position.y += self.velocity.y;
+        {
+            self.position.x += self.velocity.x;
+            self.position.y += self.velocity.y;
+        }
     }
 
     pub fn push(&mut self, side: Side) {

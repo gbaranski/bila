@@ -120,10 +120,14 @@ impl World {
             (&[KeyCode::Down, KeyCode::S], Side::Down),
         ];
 
-        for (keys, side) in BALL_KEYMAP {
-            if keys.into_iter().any(|key| is_key_down(key.to_owned())) {
-                self.primary_ball_mut().push(side.to_owned());
-            }
+        let sides = BALL_KEYMAP
+            .iter()
+            .filter(|(keys, _)| keys.into_iter().any(|key| is_key_down(key.to_owned())))
+            .map(|(_, side)| side);
+
+        self.primary_ball_mut().reset_acceleration();
+        for side in sides {
+            self.primary_ball_mut().push(side.to_owned());
         }
     }
 
