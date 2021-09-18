@@ -43,13 +43,13 @@ impl World {
 
     // TODO: Consider moving that to ball.rs
     fn draw_ball(&self, ball: &Ball) {
-        let (ball_color, text_color) = if ball.id == 0 {
+        let (ball_color, text_color) = if *ball.index() == 0 {
             (PRIMARY_BALL_COLOR, PRIMARY_TEXT_COLOR)
         } else {
             (SECONDARY_BALL_COLOR, SECONDARY_TEXT_COLOR)
         };
 
-        let text = ball.id.to_string();
+        let text = (ball.index() + 1).to_string();
         let size = measure_text(
             &text,
             Some(self.font),
