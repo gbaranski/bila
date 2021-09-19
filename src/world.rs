@@ -159,7 +159,12 @@ impl World {
                     let b_ref = &self.balls[b];
                     (b_ref.position().clone(), b_ref.velocity().clone())
                 };
+                let (a_position, a_velocity) = {
+                    let a_ref = &self.balls[a];
+                    (a_ref.position().clone(), a_ref.velocity().clone())
+                };
                 self.balls[a].handle_collision((b_position, b_velocity));
+                self.balls[b].handle_collision((a_position, a_velocity));
                 self.balls[a].highlight();
                 self.balls[b].highlight();
             }
