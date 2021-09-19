@@ -5,9 +5,9 @@ use crate::Velocity;
 use macroquad::color::Color;
 
 pub const RADIUS: f32 = 32.0;
-pub const FRICTION: f32 = 0.5;
+pub const FRICTION: f32 = 0.2;
 pub const PUSH_FACTOR: f32 = 1.0;
-pub const MAX_SPEED: f32 = 10.0;
+pub const MAX_SPEED: f32 = 15.0;
 
 pub const TEXT_FONT_SIZE: u16 = 64;
 pub const TEXT_FONT_SCALE: f32 = 1.0;
