@@ -22,11 +22,15 @@ impl World {
     pub fn new(font: Font) -> Self {
         let balls = (0..BALL_COUNT)
             .map(|n| {
-                Ball::new(
-                    n,
-                    screen_width() * (n as f32 / BALL_COUNT as f32) as f32,
-                    screen_height() / 2.0,
-                )
+                let position = if n == 0 {
+                    Position::new(screen_width() / 2.0, screen_height() / 4.0)
+                } else {
+                    Position::new(
+                        screen_width() * (n as f32 / BALL_COUNT as f32) as f32,
+                        screen_height() / 2.0,
+                    )
+                };
+                Ball::new(n, position)
             })
             .collect::<Vec<_>>();
 

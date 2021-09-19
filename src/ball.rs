@@ -25,13 +25,13 @@ pub struct Ball {
 }
 
 impl Ball {
-    pub fn new(index: Index, x: f32, y: f32) -> Self {
+    pub fn new(index: Index, position: Position) -> Self {
         let (color, text_color) = Self::default_colors(index);
         Self {
             index,
             color,
             text_color,
-            position: Position::new(x, y),
+            position,
             velocity: Velocity::new(0.0, 0.0),
             acceleration: Acceleration::new(0.0, 0.0),
         }
