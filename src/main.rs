@@ -15,6 +15,7 @@ fn window_configuration() -> macroquad::window::Conf {
         window_title: "Bila".to_string(),
         window_width: 1280,
         window_height: 720,
+        fullscreen: true,
         ..Default::default()
     }
 }
