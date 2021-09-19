@@ -65,10 +65,12 @@ impl World {
         );
     }
 
+    #[inline]
     fn primary_ball(&self) -> &Ball {
         &self.balls[0]
     }
 
+    #[inline]
     fn primary_ball_mut(&mut self) -> &mut Ball {
         &mut self.balls[0]
     }
@@ -79,7 +81,7 @@ impl World {
             let size = measure_text(&s, Some(self.font), STATS_FONT_SIZE, STATS_FONT_SCALE);
             draw_text_ex(
                 &s,
-                0.0,
+                screen_width() - size.width,
                 current_y + size.height,
                 TextParams {
                     font: self.font,
@@ -97,6 +99,7 @@ impl World {
         let acceleration = primary_ball.acceleration();
         let velocity = primary_ball.velocity();
         draw_line(&format!("tick: {}", tick));
+        draw_line(&format!("fps: {}", get_fps()));
         draw_line(&format!("pos: ({}, {})", position.x, position.y));
         draw_line(&format!("acc: ({} {})", acceleration.x, acceleration.y));
         draw_line(&format!("vel: ({} {})", velocity.x, velocity.y));
@@ -152,8 +155,6 @@ impl World {
     }
 
     pub async fn update(&mut self, tick: usize) {
-        clear_background(BLACK);
-
         for ball in &mut self.balls {
             ball.set_default_colors();
         }
