@@ -1,17 +1,11 @@
+use crate::ball;
 use crate::Ball;
-
 use crate::Side;
+
 use macroquad::prelude::*;
 use std::convert::TryInto;
 
 const BALL_COUNT: usize = 8;
-const BALL_SIZE: f32 = 32.0;
-const BALL_TEXT_FONT_SIZE: u16 = 64;
-const BALL_TEXT_FONT_SCALE: f32 = 1.0;
-const PRIMARY_BALL_COLOR: Color = RED;
-const PRIMARY_TEXT_COLOR: Color = BLUE;
-const SECONDARY_BALL_COLOR: Color = BLUE;
-const SECONDARY_TEXT_COLOR: Color = RED;
 
 const STATS_LINE_SPACING: f32 = 10.0;
 const STATS_FONT_SIZE: u16 = 24;
@@ -43,31 +37,25 @@ impl World {
 
     // TODO: Consider moving that to ball.rs
     fn draw_ball(&self, ball: &Ball) {
-        let (ball_color, text_color) = if *ball.index() == 0 {
-            (PRIMARY_BALL_COLOR, PRIMARY_TEXT_COLOR)
-        } else {
-            (SECONDARY_BALL_COLOR, SECONDARY_TEXT_COLOR)
-        };
-
         let text = (ball.index() + 1).to_string();
         let size = measure_text(
             &text,
             Some(self.font),
-            BALL_TEXT_FONT_SIZE,
-            BALL_TEXT_FONT_SCALE,
+            ball::TEXT_FONT_SIZE,
+            ball::TEXT_FONT_SCALE,
         );
         let position = ball.position();
-        draw_circle(position.x, position.y, BALL_SIZE, ball_color);
+        draw_circle(position.x, position.y, ball::RADIUS, *ball.color());
         draw_text_ex(
             &text,
             position.x - (size.width / 2.0),
             position.y + (size.height / 2.0),
             TextParams {
                 font: self.font,
-                font_size: BALL_TEXT_FONT_SIZE,
-                font_scale: BALL_TEXT_FONT_SCALE,
+                font_size: ball::TEXT_FONT_SIZE,
+                font_scale: ball::TEXT_FONT_SCALE,
                 font_scale_aspect: 1.0,
-                color: text_color,
+                color: *ball.text_color(),
             },
         );
     }
@@ -131,8 +119,40 @@ impl World {
         }
     }
 
+    /// Returns all collisions for the ball
+    fn ball_collisions(&self, ball: &Ball) -> Vec<ball::Index> {
+        self.balls
+            .iter()
+            .filter(|other| other.index() != ball.index())
+            .filter(|other| ball.does_collide(other))
+            .map(|other| other.index().clone())
+            .collect()
+    }
+
+    /// Returns all collifions from all balls
+    fn all_collisions(&self) -> Vec<(ball::Index, Vec<ball::Index>)> {
+        self.balls
+            .iter()
+            .map(|ball| (ball.index().clone(), self.ball_collisions(ball)))
+            .collect::<Vec<_>>()
+    }
+
     pub async fn update(&mut self, tick: usize) {
         clear_background(BLACK);
+
+        for ball in &mut self.balls {
+            ball.set_default_colors();
+        }
+
+        for (a, collisions) in self.all_collisions() {
+            for b in collisions {
+                println!("Collision between {} and {}", a + 1, b + 1);
+                let b_velocity = self.balls[b].velocity().clone();
+                self.balls[a].handle_collision(&b_velocity);
+                self.balls[a].highlight();
+                self.balls[b].highlight();
+            }
+        }
 
         for ball in self.balls.iter() {
             self.draw_ball(ball);

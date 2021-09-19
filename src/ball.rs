@@ -2,32 +2,62 @@ use crate::Acceleration;
 use crate::Position;
 use crate::Side;
 use crate::Velocity;
+use macroquad::color::Color;
 
-const FRICTION: f32 = 0.5;
-const PUSH_FACTOR: f32 = 1.0;
-const MAX_SPEED: f32 = 10.0;
+pub const RADIUS: f32 = 32.0;
+pub const FRICTION: f32 = 0.5;
+pub const PUSH_FACTOR: f32 = 1.0;
+pub const MAX_SPEED: f32 = 10.0;
+
+pub const TEXT_FONT_SIZE: u16 = 64;
+pub const TEXT_FONT_SCALE: f32 = 1.0;
+
+pub type Index = usize;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Ball {
-    index: usize,
+    index: Index,
+    color: Color,
+    text_color: Color,
     position: Position,
     velocity: Velocity,
     acceleration: Acceleration,
 }
 
 impl Ball {
-    pub fn new(index: usize, x: f32, y: f32) -> Self {
+    pub fn new(index: Index, x: f32, y: f32) -> Self {
+        let (color, text_color) = Self::default_colors(index);
         Self {
             index,
+            color,
+            text_color,
             position: Position { x, y },
             velocity: Velocity { x: 0.0, y: 0.0 },
             acceleration: Acceleration { x: 0.0, y: 0.0 },
         }
     }
 
+    fn default_colors(index: Index) -> (Color, Color) {
+        if index == 0 {
+            (colors::ball::PRIMARY, colors::text::PRIMARY)
+        } else {
+            (colors::ball::SECONDARY, colors::text::SECONDARY)
+        }
+    }
+
     #[inline]
-    pub fn index(&self) -> &usize {
+    pub fn index(&self) -> &Index {
         &self.index
+    }
+
+    #[inline]
+    pub fn color(&self) -> &Color {
+        &self.color
+    }
+
+    #[inline]
+    pub fn text_color(&self) -> &Color {
+        &self.text_color
     }
 
     #[inline]
@@ -44,6 +74,26 @@ impl Ball {
     pub fn acceleration(&self) -> &Acceleration {
         &self.acceleration
     }
+
+    pub fn does_collide(&self, other: &Self) -> bool {
+        let distance = (self.position.x - other.position.x).powi(2)
+            + (self.position.y - other.position.y).powi(2);
+
+        distance < (RADIUS + RADIUS).powi(2)
+    }
+
+    pub fn highlight(&mut self) {
+        self.color = colors::ball::HIGHLIGHT;
+        self.text_color = colors::text::HIGHLIGHT;
+    }
+
+    pub fn set_default_colors(&mut self) {
+        let (color, text_color) = Self::default_colors(self.index);
+        self.color = color;
+        self.text_color = text_color;
+    }
+
+    pub fn handle_collision(&mut self, velocity: &Velocity) {}
 
     pub fn reset_acceleration(&mut self) {
         self.acceleration.x = 0.0;
@@ -92,5 +142,28 @@ impl Ball {
             Side::Up => self.acceleration.y -= PUSH_FACTOR,
             Side::Down => self.acceleration.y += PUSH_FACTOR,
         };
+    }
+}
+
+mod colors {
+    use macroquad::color::Color;
+    use macroquad::color::BLUE;
+    use macroquad::color::RED;
+    use macroquad::color::YELLOW;
+
+    pub mod ball {
+        use super::*;
+
+        pub const PRIMARY: Color = RED;
+        pub const SECONDARY: Color = BLUE;
+        pub const HIGHLIGHT: Color = YELLOW;
+    }
+
+    pub mod text {
+        use super::*;
+
+        pub const PRIMARY: Color = BLUE;
+        pub const SECONDARY: Color = RED;
+        pub const HIGHLIGHT: Color = BLUE;
     }
 }
