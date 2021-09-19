@@ -1,20 +1,8 @@
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Position {
-    pub x: f32,
-    pub y: f32,
-}
+use glam::Vec2;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Velocity {
-    pub x: f32,
-    pub y: f32,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Acceleration {
-    pub x: f32,
-    pub y: f32,
-}
+pub type Position = Vec2;
+pub type Velocity = Vec2;
+pub type Acceleration = Vec2;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Side {

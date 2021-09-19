@@ -31,9 +31,9 @@ impl Ball {
             index,
             color,
             text_color,
-            position: Position { x, y },
-            velocity: Velocity { x: 0.0, y: 0.0 },
-            acceleration: Acceleration { x: 0.0, y: 0.0 },
+            position: Position::new(x, y),
+            velocity: Velocity::new(0.0, 0.0),
+            acceleration: Acceleration::new(0.0, 0.0),
         }
     }
 
@@ -93,7 +93,15 @@ impl Ball {
         self.text_color = text_color;
     }
 
-    pub fn handle_collision(&mut self, velocity: &Velocity) {}
+    pub fn handle_collision(&mut self, (other_position, other_velocity): (Position, Velocity)) {
+        let position_delta = other_position - self.position;
+        let distance = position_delta.length();
+        let norm = distance.powi(2);
+        let velocity_delta = other_velocity - self.velocity;
+
+        self.velocity += ((velocity_delta).dot(position_delta) / norm) * position_delta;
+        self.position -= position_delta / distance * (RADIUS * 2.0 - distance) * 0.5;
+    }
 
     pub fn reset_acceleration(&mut self) {
         self.acceleration.x = 0.0;

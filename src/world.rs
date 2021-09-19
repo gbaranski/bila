@@ -87,6 +87,7 @@ impl World {
             current_y += size.height + STATS_LINE_SPACING;
         };
         let primary_ball = self.primary_ball();
+        let collisions = self.ball_collisions(&primary_ball);
         let position = primary_ball.position();
         let acceleration = primary_ball.acceleration();
         let velocity = primary_ball.velocity();
@@ -146,9 +147,11 @@ impl World {
 
         for (a, collisions) in self.all_collisions() {
             for b in collisions {
-                println!("Collision between {} and {}", a + 1, b + 1);
-                let b_velocity = self.balls[b].velocity().clone();
-                self.balls[a].handle_collision(&b_velocity);
+                let (b_position, b_velocity) = {
+                    let b_ref = &self.balls[b];
+                    (b_ref.position().clone(), b_ref.velocity().clone())
+                };
+                self.balls[a].handle_collision((b_position, b_velocity));
                 self.balls[a].highlight();
                 self.balls[b].highlight();
             }
