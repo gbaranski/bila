@@ -95,6 +95,14 @@ impl World {
         draw_line(&format!("pos: ({}, {})", position.x, position.y));
         draw_line(&format!("acc: ({} {})", acceleration.x, acceleration.y));
         draw_line(&format!("vel: ({} {})", velocity.x, velocity.y));
+        draw_line(&format!(
+            "collisions: {}",
+            collisions
+                .iter()
+                .map(|v| (v + 1).to_string())
+                .collect::<Vec<_>>()
+                .join(", ")
+        ));
     }
 
     fn handle_keys(&mut self) {
