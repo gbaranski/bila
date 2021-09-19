@@ -118,15 +118,15 @@ impl Ball {
         // Apply friction
         {
             if self.velocity.x > 0.0 {
-                self.velocity.x += -FRICTION;
+                self.velocity.x = (self.velocity.x - FRICTION).max(0.0);
             } else if self.velocity.x < 0.0 {
-                self.velocity.x += FRICTION;
+                self.velocity.x = (self.velocity.x + FRICTION).min(0.0);
             }
 
             if self.velocity.y > 0.0 {
-                self.velocity.y += -FRICTION;
+                self.velocity.y = (self.velocity.y - FRICTION).max(0.0);
             } else if self.velocity.y < 0.0 {
-                self.velocity.y += FRICTION;
+                self.velocity.y = (self.velocity.y + FRICTION).min(0.0);
             }
         }
 
