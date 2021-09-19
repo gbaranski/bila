@@ -1,5 +1,6 @@
 use crate::ball;
 use crate::Ball;
+use crate::Position;
 use crate::Side;
 
 use macroquad::prelude::*;
@@ -170,12 +171,13 @@ impl World {
             }
         }
 
-        for ball in self.balls.iter() {
+        for ball in &self.balls {
             self.draw_ball(ball);
         }
 
         self.handle_keys();
-        self.primary_ball_mut().update();
+        self.primary_ball_mut()
+            .update(Position::new(screen_width(), screen_height()));
         self.draw_stats(tick);
 
         next_frame().await;

@@ -108,7 +108,7 @@ impl Ball {
         self.acceleration.y = 0.0;
     }
 
-    pub fn update(&mut self) {
+    pub fn update(&mut self, wall: Position) {
         // Apply acceleration
         {
             self.velocity.x += self.acceleration.x;
@@ -138,8 +138,8 @@ impl Ball {
 
         // Update position
         {
-            self.position.x += self.velocity.x;
-            self.position.y += self.velocity.y;
+            self.position.x = (self.position.x + self.velocity.x).clamp(RADIUS, wall.x - RADIUS);
+            self.position.y = (self.position.y + self.velocity.y).clamp(RADIUS, wall.y - RADIUS);
         }
     }
 
