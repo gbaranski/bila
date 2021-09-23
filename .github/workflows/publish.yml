@@ -49,9 +49,7 @@ jobs:
 
       - name: Prepare for deployment
         run: |
-          mkdir public/
           cp target/wasm32-unknown-unknown/release/bila.wasm public/
-          cp web/index.html public/
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
