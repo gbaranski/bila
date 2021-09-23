@@ -1,0 +1,61 @@
+name: publish
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: wasm32-unknown-unknown
+          profile: minimal
+          override: true
+
+      - name: Cache cargo registry
+        uses: actions/cache@v2.1.6
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-v1-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo index
+        uses: actions/cache@v2.1.6
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-v1-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Cache cargo target dir
+        uses: actions/cache@v2.1.6
+        with:
+          path: target
+          key: ${{ runner.os }}-v1-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Run cargo build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --target wasm32-unknown-unknown
+
+      - name: Prepare for deployment
+        run: |
+          mkdir public/
+          cp target/wasm32-unknown-unknown/release/bila.wasm public/
+          cp web/index.html public/
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+
