@@ -65,6 +65,18 @@ impl World {
         );
     }
 
+    fn draw_arrow(&self, cursor: Vec2) {
+        let primary_ball = self.primary_ball();
+        draw_line(
+            primary_ball.position().x,
+            primary_ball.position().y,
+            cursor.x,
+            cursor.y,
+            5.0,
+            Color::new(255.0, 0.0, 0.0, 0.8),
+        );
+    }
+
     #[inline]
     fn primary_ball(&self) -> &Ball {
         &self.balls[0]
@@ -155,24 +167,30 @@ impl World {
     }
 
     pub async fn update(&mut self, tick: usize) {
+        // let aspect_ratio = macroquad::window::screen_width() / macroquad::window::screen_height();
+        // let camera = Camera2D::from_display_rect(Rect {
+        //     x: -aspect_ratio,
+        //     y: -1.0,
+        //     w: aspect_ratio * 2.0,
+        //     h: 2.0,
+        // });
+        // set_camera(&camera);
+        // let mouse_position = camera.screen_to_world(macroquad::input::mouse_position().into());
+        let mouse_position = macroquad::input::mouse_position().into();
         for ball in &mut self.balls {
             ball.set_default_colors();
         }
 
         for (a, collisions) in self.all_collisions() {
             for b in collisions {
-                let (b_position, b_velocity) = {
-                    let b_ref = &self.balls[b];
-                    (b_ref.position().clone(), b_ref.velocity().clone())
+                let mut f = |a, b| {
+                    let other = self.balls[a];
+                    let ball: &mut Ball = &mut self.balls[b];
+                    ball.handle_collision(&other);
+                    ball.highlight();
                 };
-                let (a_position, a_velocity) = {
-                    let a_ref = &self.balls[a];
-                    (a_ref.position().clone(), a_ref.velocity().clone())
-                };
-                self.balls[a].handle_collision((b_position, b_velocity));
-                self.balls[b].handle_collision((a_position, a_velocity));
-                self.balls[a].highlight();
-                self.balls[b].highlight();
+                f(a, b);
+                f(b, a);
             }
         }
 
@@ -183,6 +201,7 @@ impl World {
         self.handle_keys();
         self.primary_ball_mut()
             .update(Position::new(screen_width(), screen_height()));
+        self.draw_arrow(mouse_position);
         self.draw_stats(tick);
 
         next_frame().await;

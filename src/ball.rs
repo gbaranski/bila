@@ -19,6 +19,7 @@ pub struct Ball {
     index: Index,
     color: Color,
     text_color: Color,
+    radius: f32,
     position: Position,
     velocity: Velocity,
     acceleration: Acceleration,
@@ -31,6 +32,7 @@ impl Ball {
             index,
             color,
             text_color,
+            radius: RADIUS,
             position,
             velocity: Velocity::new(0.0, 0.0),
             acceleration: Acceleration::new(0.0, 0.0),
@@ -61,6 +63,11 @@ impl Ball {
     }
 
     #[inline]
+    pub fn radius(&self) -> &f32 {
+        &self.radius
+    }
+
+    #[inline]
     pub fn position(&self) -> &Position {
         &self.position
     }
@@ -79,7 +86,7 @@ impl Ball {
         let distance = (self.position.x - other.position.x).powi(2)
             + (self.position.y - other.position.y).powi(2);
 
-        distance < (RADIUS + RADIUS).powi(2)
+        distance < (self.radius + other.radius).powi(2)
     }
 
     pub fn highlight(&mut self) {
@@ -93,14 +100,14 @@ impl Ball {
         self.text_color = text_color;
     }
 
-    pub fn handle_collision(&mut self, (other_position, other_velocity): (Position, Velocity)) {
-        let position_delta = other_position - self.position;
+    pub fn handle_collision(&mut self, other: &Self) {
+        let position_delta = other.position - self.position;
         let distance = position_delta.length();
         let norm = distance.powi(2);
-        let velocity_delta = other_velocity - self.velocity;
+        let velocity_delta = other.velocity - self.velocity;
 
         self.velocity += ((velocity_delta).dot(position_delta) / norm) * position_delta;
-        self.position -= position_delta / distance * (RADIUS * 2.0 - distance) * 0.5;
+        self.position -= position_delta / distance * (self.radius + other.radius - distance) * 0.5;
     }
 
     pub fn reset_acceleration(&mut self) {
@@ -138,8 +145,8 @@ impl Ball {
 
         // Update position
         {
-            self.position.x = (self.position.x + self.velocity.x).clamp(RADIUS, wall.x - RADIUS);
-            self.position.y = (self.position.y + self.velocity.y).clamp(RADIUS, wall.y - RADIUS);
+            self.position.x = (self.position.x + self.velocity.x).clamp(self.radius, wall.x - self.radius);
+            self.position.y = (self.position.y + self.velocity.y).clamp(self.radius, wall.y - self.radius);
         }
     }
 
