@@ -27,11 +27,11 @@ impl World {
                     Position::new(
                         screen_width() * (n as f32 / BALL_COUNT as f32) as f32,
                         screen_height() / 2.0,
-                    )
+                        )
                 };
                 Ball::new(n, position)
             })
-            .collect::<Vec<_>>();
+        .collect::<Vec<_>>();
 
         Self {
             font,
@@ -47,7 +47,7 @@ impl World {
             Some(self.font),
             ball::TEXT_FONT_SIZE,
             ball::TEXT_FONT_SCALE,
-        );
+            );
         let position = ball.position();
         draw_circle(position.x, position.y, ball::RADIUS, *ball.color());
         draw_text_ex(
@@ -61,7 +61,7 @@ impl World {
                 font_scale_aspect: 1.0,
                 color: *ball.text_color(),
             },
-        );
+            );
     }
 
     fn draw_arrow(&self) {
@@ -73,8 +73,8 @@ impl World {
             mouse_position.x,
             mouse_position.y,
             5.0,
-            Color::new(255.0, 0.0, 0.0, 0.8),
-        );
+            Color::new(155.0, 0.0, 0.0, 0.8),
+            );
     }
 
     #[inline]
@@ -102,7 +102,7 @@ impl World {
                     font_scale_aspect: 1.0,
                     color: STATS_FONT_COLOR,
                 },
-            );
+                );
             current_y += size.height + STATS_LINE_SPACING;
         };
         let primary_ball = self.primary_ball();
@@ -116,13 +116,13 @@ impl World {
         draw_line(&format!("acc: ({} {})", acceleration.x, acceleration.y));
         draw_line(&format!("vel: ({} {})", velocity.x, velocity.y));
         draw_line(&format!(
-            "collisions: {}",
-            collisions
+                "collisions: {}",
+                collisions
                 .iter()
                 .map(|v| (v + 1).to_string())
                 .collect::<Vec<_>>()
                 .join(", ")
-        ));
+                ));
     }
 
     fn handle_keys(&mut self) {
@@ -138,11 +138,15 @@ impl World {
             let dx = primary_ball.position().x - mouse_position.x;
             let dy = primary_ball.position().y - mouse_position.y;
 
-            let vx = (dx / d).sin();
-            let vy = (dy / d).sin();
+            let vx = dx / d;
+            let vy = dy / d;
+
             let v = Vec2::new(vx, vy);
-            dbg!(v);
-            primary_ball.push(-v * 2.0);
+
+            let screen_size: f32 = f64::from(screen_width().powi(2)+screen_height().powi(2)).sqrt() as f32;
+            let limit: f32 = 3.0;
+            let scalar = (limit*2.0f32*((d as f32)/screen_size)).min(limit);
+            primary_ball.push(-v * scalar);
         }
     }
 
