@@ -1,12 +1,11 @@
 use crate::Acceleration;
 use crate::Position;
-use crate::Side;
 use crate::Velocity;
 use macroquad::color::Color;
+use macroquad::prelude::Vec2;
 
 pub const RADIUS: f32 = 32.0;
 pub const FRICTION: f32 = 0.2;
-pub const PUSH_FACTOR: f32 = 1.0;
 pub const MAX_SPEED: f32 = 15.0;
 
 pub const TEXT_FONT_SIZE: u16 = 64;
@@ -150,13 +149,8 @@ impl Ball {
         }
     }
 
-    pub fn push(&mut self, side: Side) {
-        match side {
-            Side::Left => self.acceleration.x -= PUSH_FACTOR,
-            Side::Right => self.acceleration.x += PUSH_FACTOR,
-            Side::Up => self.acceleration.y -= PUSH_FACTOR,
-            Side::Down => self.acceleration.y += PUSH_FACTOR,
-        };
+    pub fn push(&mut self, v: Vec2) {
+        self.velocity += v;
     }
 }
 

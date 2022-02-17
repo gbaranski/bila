@@ -1,7 +1,6 @@
 use crate::ball;
 use crate::Ball;
 use crate::Position;
-use crate::Side;
 
 use macroquad::prelude::*;
 use std::convert::TryInto;
@@ -65,13 +64,14 @@ impl World {
         );
     }
 
-    fn draw_arrow(&self, cursor: Vec2) {
+    fn draw_arrow(&self) {
+        let mouse_position: Vec2 = macroquad::input::mouse_position().into();
         let primary_ball = self.primary_ball();
         draw_line(
             primary_ball.position().x,
             primary_ball.position().y,
-            cursor.x,
-            cursor.y,
+            mouse_position.x,
+            mouse_position.y,
             5.0,
             Color::new(255.0, 0.0, 0.0, 0.8),
         );
@@ -130,21 +130,19 @@ impl World {
             std::process::exit(0);
         }
 
-        const BALL_KEYMAP: &[(&[KeyCode], Side)] = &[
-            (&[KeyCode::Left, KeyCode::A], Side::Left),
-            (&[KeyCode::Right, KeyCode::D], Side::Right),
-            (&[KeyCode::Up, KeyCode::W], Side::Up),
-            (&[KeyCode::Down, KeyCode::S], Side::Down),
-        ];
 
-        let sides = BALL_KEYMAP
-            .iter()
-            .filter(|(keys, _)| keys.into_iter().any(|key| is_key_down(key.to_owned())))
-            .map(|(_, side)| side);
+        if is_mouse_button_down(macroquad::input::MouseButton::Left) {
+            let mouse_position: Vec2 = macroquad::input::mouse_position().into();
+            let primary_ball = self.primary_ball_mut();
+            let d = primary_ball.position().distance(mouse_position);
+            let dx = primary_ball.position().x - mouse_position.x;
+            let dy = primary_ball.position().y - mouse_position.y;
 
-        self.primary_ball_mut().reset_acceleration();
-        for side in sides {
-            self.primary_ball_mut().push(side.to_owned());
+            let vx = (dx / d).sin();
+            let vy = (dy / d).sin();
+            let v = Vec2::new(vx, vy);
+            dbg!(v);
+            primary_ball.push(-v * 2.0);
         }
     }
 
@@ -167,16 +165,6 @@ impl World {
     }
 
     pub async fn update(&mut self, tick: usize) {
-        // let aspect_ratio = macroquad::window::screen_width() / macroquad::window::screen_height();
-        // let camera = Camera2D::from_display_rect(Rect {
-        //     x: -aspect_ratio,
-        //     y: -1.0,
-        //     w: aspect_ratio * 2.0,
-        //     h: 2.0,
-        // });
-        // set_camera(&camera);
-        // let mouse_position = camera.screen_to_world(macroquad::input::mouse_position().into());
-        let mouse_position = macroquad::input::mouse_position().into();
         for ball in &mut self.balls {
             ball.set_default_colors();
         }
@@ -201,7 +189,7 @@ impl World {
         self.handle_keys();
         self.primary_ball_mut()
             .update(Position::new(screen_width(), screen_height()));
-        self.draw_arrow(mouse_position);
+        self.draw_arrow();
         self.draw_stats(tick);
 
         next_frame().await;

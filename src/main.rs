@@ -6,7 +6,6 @@ mod world;
 use ball::Ball;
 use misc::Acceleration;
 use misc::Position;
-use misc::Side;
 use misc::Velocity;
 use world::World;
 
