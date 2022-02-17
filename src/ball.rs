@@ -123,16 +123,17 @@ impl Ball {
 
         // Apply friction
         {
+            let drag:f32 = 0.97;
             if self.velocity.x > 0.0 {
-                self.velocity.x = (self.velocity.x - FRICTION).max(0.0);
+                self.velocity.x = (self.velocity.x * drag ).max(0.02);
             } else if self.velocity.x < 0.0 {
-                self.velocity.x = (self.velocity.x + FRICTION).min(0.0);
+                self.velocity.x = (self.velocity.x * drag ).min(0.02);
             }
 
             if self.velocity.y > 0.0 {
-                self.velocity.y = (self.velocity.y - FRICTION).max(0.0);
+                self.velocity.y = (self.velocity.y * drag ).max(0.02);
             } else if self.velocity.y < 0.0 {
-                self.velocity.y = (self.velocity.y + FRICTION).min(0.0);
+                self.velocity.y = (self.velocity.y * drag ).min(0.02);
             }
         }
 

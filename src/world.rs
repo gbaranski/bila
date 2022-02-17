@@ -125,13 +125,16 @@ impl World {
                 ));
     }
 
-    fn handle_keys(&mut self) {
+    unsafe fn handle_keys(&mut self) {
         if is_key_pressed(KeyCode::Escape) {
             std::process::exit(0);
         }
 
-
-        if is_mouse_button_down(macroquad::input::MouseButton::Left) {
+        static mut mouse_down: bool = false;
+        if is_mouse_button_down(macroquad::input::MouseButton::Left){
+            mouse_down = true;
+        }
+        else if mouse_down {
             let mouse_position: Vec2 = macroquad::input::mouse_position().into();
             let primary_ball = self.primary_ball_mut();
             let d = primary_ball.position().distance(mouse_position);
@@ -144,10 +147,12 @@ impl World {
             let v = Vec2::new(vx, vy);
 
             let screen_size: f32 = f64::from(screen_width().powi(2)+screen_height().powi(2)).sqrt() as f32;
-            let limit: f32 = 3.0;
+            let limit: f32 = 30.0;
             let scalar = (limit*2.0f32*((d as f32)/screen_size)).min(limit);
             primary_ball.push(-v * scalar);
+            mouse_down = false;
         }
+
     }
 
     /// Returns all collisions for the ball
@@ -190,7 +195,9 @@ impl World {
             self.draw_ball(ball);
         }
 
-        self.handle_keys();
+        unsafe{
+            self.handle_keys();
+        }
         self.primary_ball_mut()
             .update(Position::new(screen_width(), screen_height()));
         self.draw_arrow();
