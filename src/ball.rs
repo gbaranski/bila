@@ -147,6 +147,16 @@ impl Ball {
             self.position.x = (self.position.x + self.velocity.x).clamp(self.radius, wall.x - self.radius);
             self.position.y = (self.position.y + self.velocity.y).clamp(self.radius, wall.y - self.radius);
         }
+
+        // rounding friction to 4 decimal places
+        let digits = 2;
+        let ten_to_n = 10_f32.powi(digits);
+        self.velocity.x  =  (self.velocity.x*ten_to_n).round()/ten_to_n;
+        self.velocity.y  =  (self.velocity.y*ten_to_n).round()/ten_to_n;
+
+        self.position.x  =  (self.position.x*ten_to_n).round()/ten_to_n;
+        self.position.y  =  (self.position.y*ten_to_n).round()/ten_to_n;
+
     }
 
     pub fn push(&mut self, v: Vec2) {
