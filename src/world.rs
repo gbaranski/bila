@@ -15,6 +15,7 @@ const STATS_FONT_SCALE: f32 = 1.0;
 pub struct World {
     font: Font,
     balls: [Ball; BALL_COUNT],
+    mouse_down: bool, 
 }
 
 impl World {
@@ -34,6 +35,7 @@ impl World {
         .collect::<Vec<_>>();
 
         Self {
+            mouse_down: false, 
             font,
             balls: balls.try_into().unwrap(),
         }
@@ -125,16 +127,15 @@ impl World {
                 ));
     }
 
-    unsafe fn handle_keys(&mut self) {
+    fn handle_keys(&mut self) {
         if is_key_pressed(KeyCode::Escape) {
             std::process::exit(0);
         }
 
-        static mut mouse_down: bool = false;
         if is_mouse_button_down(macroquad::input::MouseButton::Left){
-            mouse_down = true;
+            self.mouse_down = true;
         }
-        else if mouse_down {
+        else if self.mouse_down {
             let mouse_position: Vec2 = macroquad::input::mouse_position().into();
             let primary_ball = self.primary_ball_mut();
             let d = primary_ball.position().distance(mouse_position);
@@ -150,7 +151,7 @@ impl World {
             let limit: f32 = 30.0;
             let scalar = (limit*2.0f32*((d as f32)/screen_size)).min(limit);
             primary_ball.push(-v * scalar);
-            mouse_down = false;
+            self.mouse_down = false;
         }
 
     }
@@ -195,9 +196,7 @@ impl World {
             self.draw_ball(ball);
         }
 
-        unsafe{
-            self.handle_keys();
-        }
+        self.handle_keys();
         self.primary_ball_mut()
             .update(Position::new(screen_width(), screen_height()));
         self.draw_arrow();
