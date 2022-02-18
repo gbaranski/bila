@@ -124,15 +124,15 @@ impl Ball {
         {
             let drag:f32 = 0.97;
             if self.velocity.x > 0.0 {
-                self.velocity.x = (self.velocity.x * drag ).max(0.02);
+                self.velocity.x = self.velocity.x * drag;
             } else if self.velocity.x < 0.0 {
-                self.velocity.x = (self.velocity.x * drag ).min(0.02);
+                self.velocity.x = self.velocity.x * drag;
             }
 
             if self.velocity.y > 0.0 {
-                self.velocity.y = (self.velocity.y * drag ).max(0.02);
+                self.velocity.y = self.velocity.y * drag;
             } else if self.velocity.y < 0.0 {
-                self.velocity.y = (self.velocity.y * drag ).min(0.02);
+                self.velocity.y = self.velocity.y * drag;
             }
         }
 
@@ -148,15 +148,23 @@ impl Ball {
             self.position.y = (self.position.y + self.velocity.y).clamp(self.radius, wall.y - self.radius);
         }
 
-        // rounding friction to 4 decimal places
-        let digits = 2;
+        // rounding friction to N decimal places
+        let digits = 4;
         let ten_to_n = 10_f32.powi(digits);
         self.velocity.x  =  (self.velocity.x*ten_to_n).round()/ten_to_n;
         self.velocity.y  =  (self.velocity.y*ten_to_n).round()/ten_to_n;
+        //dbg!(self.velocity.x.abs());
+        //dbg!((16.0 - 0.01f32) / (ten_to_n ));
+
+        if self.velocity.x.abs() <=  16.0 / (ten_to_n){
+            self.velocity.x = 0f32;
+        }
+        if self.velocity.y.abs() <=  16.0 / (ten_to_n){
+            self.velocity.y = 0f32;
+        }
 
         self.position.x  =  (self.position.x*ten_to_n).round()/ten_to_n;
         self.position.y  =  (self.position.y*ten_to_n).round()/ten_to_n;
-
     }
 
     pub fn push(&mut self, v: Vec2) {
