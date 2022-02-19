@@ -6,7 +6,6 @@ use macroquad::prelude::*;
 use std::convert::TryInto;
 
 const BALL_COUNT: usize = 8;
-
 const STATS_LINE_SPACING: f32 = 10.0;
 const STATS_FONT_SIZE: u16 = 24;
 const STATS_FONT_COLOR: Color = WHITE;
@@ -15,7 +14,7 @@ const STATS_FONT_SCALE: f32 = 1.0;
 pub struct World {
     font: Font,
     balls: [Ball; BALL_COUNT],
-    mouse_down: bool, 
+    mouse_down: bool,
 }
 
 impl World {
@@ -35,7 +34,7 @@ impl World {
         .collect::<Vec<_>>();
 
         Self {
-            mouse_down: false, 
+            mouse_down: false,
             font,
             balls: balls.try_into().unwrap(),
         }
@@ -132,28 +131,26 @@ impl World {
             std::process::exit(0);
         }
 
-        if is_mouse_button_down(macroquad::input::MouseButton::Left){
+        if is_mouse_button_down(macroquad::input::MouseButton::Left) {
             self.mouse_down = true;
-        }
-        else if self.mouse_down {
+        } else if self.mouse_down {
             let mouse_position: Vec2 = macroquad::input::mouse_position().into();
             let primary_ball = self.primary_ball_mut();
             let d = primary_ball.position().distance(mouse_position);
             let dx = primary_ball.position().x - mouse_position.x;
             let dy = primary_ball.position().y - mouse_position.y;
+            let mut v=Vec2::new(0.0, 0.0);
+            if d != 0.0 {
+                v = Vec2::new(dx/d, dy/d);
+            }
 
-            let vx = dx / d;
-            let vy = dy / d;
-
-            let v = Vec2::new(vx, vy);
-
-            let screen_size: f32 = f64::from(screen_width().powi(2)+screen_height().powi(2)).sqrt() as f32;
+            let screen_size: f32 =
+                f64::from(screen_width().powi(2) + screen_height().powi(2)).sqrt() as f32;
             let limit: f32 = 30.0;
-            let scalar = (limit*2.0f32*((d as f32)/screen_size)).min(limit);
+            let scalar = (limit * 2.0f32 * ((d as f32) / screen_size)).min(limit);
             primary_ball.push(-v * scalar);
             self.mouse_down = false;
         }
-
     }
 
     /// Returns all collisions for the ball

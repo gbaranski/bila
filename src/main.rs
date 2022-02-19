@@ -27,7 +27,7 @@ async fn main() {
     };
 
     let mut world = World::new(font);
-    
+
     for i in 0.. {
         macroquad_profiler::profiler(Default::default());
         world.update(i).await;
