@@ -5,7 +5,7 @@ use macroquad::color::Color;
 use macroquad::prelude::Vec2;
 
 pub const RADIUS: f32 = 32.0;
-pub const FRICTION: f32 = 0.2;
+pub const FRICTION: f32 = 10.0;
 
 pub const TEXT_FONT_SIZE: u16 = 64;
 pub const TEXT_FONT_SCALE: f32 = 1.0;
@@ -106,21 +106,23 @@ impl Ball {
     }
 
     pub fn update(&mut self, dt: f32, wall: Position) {
-        let acceleration = if self.velocity == Vec2::ZERO {
-            Vec2::ZERO
-        } else {
-            // Make sure friction is not greater than speed
-            let speed = self.velocity.length();
-            if speed <= FRICTION {
-                -1.0 * self.velocity
+        // Set acceleration
+        {
+            self.acceleration = if self.velocity == Vec2::ZERO {
+                Vec2::ZERO
             } else {
-                let direction = self.velocity.normalize();
-                let friction = -1.0 * direction * FRICTION;
-                friction
-            }
-        };
+                let speed = self.velocity.length() / dt;
+                if speed <= FRICTION {
+                    -1.0 * self.velocity / dt
+                } else {
+                    let direction = self.velocity.normalize();
+                    let friction = -1.0 * direction * FRICTION;
+                    friction
+                }
+            };
+        }
 
-        self.velocity += acceleration;
+        self.velocity += self.acceleration * dt;
 
         // Update position
         {
