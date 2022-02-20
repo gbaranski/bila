@@ -103,7 +103,6 @@ impl Ball {
     }
 
     fn round_numbers(&mut self) {
-
         // Limit the velocity
         // rounding friction to N decimal places
         let digits = 4;

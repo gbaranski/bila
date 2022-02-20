@@ -27,11 +27,11 @@ impl World {
                     Position::new(
                         screen_width() * (n as f32 / BALL_COUNT as f32) as f32,
                         screen_height() / 2.0,
-                        )
+                    )
                 };
                 Ball::new(n, position)
             })
-        .collect::<Vec<_>>();
+            .collect::<Vec<_>>();
 
         Self {
             mouse_down: false,
@@ -48,7 +48,7 @@ impl World {
             Some(self.font),
             ball::TEXT_FONT_SIZE,
             ball::TEXT_FONT_SCALE,
-            );
+        );
         let position = ball.position();
         draw_circle(position.x, position.y, ball::RADIUS, *ball.color());
         draw_text_ex(
@@ -62,7 +62,7 @@ impl World {
                 font_scale_aspect: 1.0,
                 color: *ball.text_color(),
             },
-            );
+        );
     }
 
     fn draw_arrow(&self) {
@@ -75,7 +75,7 @@ impl World {
             mouse_position.y,
             5.0,
             Color::new(155.0, 0.0, 0.0, 0.8),
-            );
+        );
     }
 
     #[inline]
@@ -103,7 +103,7 @@ impl World {
                     font_scale_aspect: 1.0,
                     color: STATS_FONT_COLOR,
                 },
-                );
+            );
             current_y += size.height + STATS_LINE_SPACING;
         };
         let primary_ball = self.primary_ball();
@@ -117,13 +117,13 @@ impl World {
         draw_line(&format!("acc: ({} {})", acceleration.x, acceleration.y));
         draw_line(&format!("vel: ({} {})", velocity.x, velocity.y));
         draw_line(&format!(
-                "collisions: {}",
-                collisions
+            "collisions: {}",
+            collisions
                 .iter()
                 .map(|v| (v + 1).to_string())
                 .collect::<Vec<_>>()
                 .join(", ")
-                ));
+        ));
     }
 
     fn handle_keys(&mut self) {
@@ -137,7 +137,7 @@ impl World {
             let mouse_position: Vec2 = macroquad::input::mouse_position().into();
             let primary_ball = self.primary_ball_mut();
             let d = primary_ball.position().distance(mouse_position).max(0.001);
-            let v = (*primary_ball.position()-mouse_position )/d;
+            let v = (*primary_ball.position() - mouse_position) / d;
             let screen_size: f32 =
                 f64::from(screen_width().powi(2) + screen_height().powi(2)).sqrt() as f32;
             let limit: f32 = 30.0;
