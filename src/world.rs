@@ -166,6 +166,7 @@ impl World {
     }
 
     pub async fn update(&mut self, tick: usize) {
+        let dt = get_frame_time();
         for ball in &mut self.balls {
             ball.set_default_colors();
         }
@@ -189,7 +190,7 @@ impl World {
 
         self.handle_keys();
         self.primary_ball_mut()
-            .update(Position::new(screen_width(), screen_height()));
+            .update(dt, Position::new(screen_width(), screen_height()));
         self.draw_arrow();
         self.draw_stats(tick);
 

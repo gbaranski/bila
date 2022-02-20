@@ -5,6 +5,7 @@ use macroquad::color::Color;
 use macroquad::prelude::Vec2;
 
 pub const RADIUS: f32 = 32.0;
+pub const FRICTION: f32 = 0.2;
 
 pub const TEXT_FONT_SIZE: u16 = 64;
 pub const TEXT_FONT_SCALE: f32 = 1.0;
@@ -20,6 +21,7 @@ pub struct Ball {
     position: Position,
     velocity: Velocity,
     acceleration: Acceleration,
+    mass: f32,
 }
 
 impl Ball {
@@ -33,6 +35,7 @@ impl Ball {
             position,
             velocity: Velocity::new(0.0, 0.0),
             acceleration: Acceleration::new(0.0, 0.0),
+            mass: 10.0,
         }
     }
 
@@ -102,29 +105,22 @@ impl Ball {
         self.position -= position_delta / distance * (self.radius + other.radius - distance) * 0.5;
     }
 
-    fn round_numbers(&mut self) {
-        // Limit the velocity
-        // rounding friction to N decimal places
-        let digits = 4;
-        let ten_to_n = 10_f32.powi(digits);
-        self.velocity.x = (self.velocity.x * ten_to_n).round() / ten_to_n;
-        self.velocity.y = (self.velocity.y * ten_to_n).round() / ten_to_n;
-        if self.velocity.x.abs() <= 16.0 / (ten_to_n) {
-            self.velocity.x = 0f32;
-        }
-        if self.velocity.y.abs() <= 16.0 / (ten_to_n) {
-            self.velocity.y = 0f32;
-        }
-        self.position.x = (self.position.x * ten_to_n).round() / ten_to_n;
-        self.position.y = (self.position.y * ten_to_n).round() / ten_to_n;
-    }
+    pub fn update(&mut self, dt: f32, wall: Position) {
+        let acceleration = if self.velocity == Vec2::ZERO {
+            Vec2::ZERO
+        } else {
+            // Make sure friction is not greater than speed
+            let speed = self.velocity.length();
+            if speed <= FRICTION {
+                -1.0 * self.velocity
+            } else {
+                let direction = self.velocity.normalize();
+                let friction = -1.0 * direction * FRICTION;
+                friction
+            }
+        };
 
-    pub fn update(&mut self, wall: Position) {
-        // Apply friction
-        {
-            let drag: f32 = 0.97;
-            self.velocity *= drag;
-        }
+        self.velocity += acceleration;
 
         // Update position
         {
@@ -133,7 +129,6 @@ impl Ball {
             self.position.y =
                 (self.position.y + self.velocity.y).clamp(self.radius, wall.y - self.radius);
         }
-        self.round_numbers();
     }
 
     pub fn push(&mut self, v: Vec2) {
