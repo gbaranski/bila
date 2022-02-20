@@ -136,7 +136,7 @@ impl World {
         } else if self.mouse_down {
             let mouse_position: Vec2 = macroquad::input::mouse_position().into();
             let primary_ball = self.primary_ball_mut();
-            let d = primary_ball.position().distance(mouse_position);
+            let d = primary_ball.position().distance(mouse_position).max(0.001);
             let v = (*primary_ball.position()-mouse_position )/d;
             let screen_size: f32 =
                 f64::from(screen_width().powi(2) + screen_height().powi(2)).sqrt() as f32;
