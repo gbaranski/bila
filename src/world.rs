@@ -137,13 +137,7 @@ impl World {
             let mouse_position: Vec2 = macroquad::input::mouse_position().into();
             let primary_ball = self.primary_ball_mut();
             let d = primary_ball.position().distance(mouse_position);
-            let dx = primary_ball.position().x - mouse_position.x;
-            let dy = primary_ball.position().y - mouse_position.y;
-            let mut v=Vec2::new(0.0, 0.0);
-            if d != 0.0 {
-                v = Vec2::new(dx/d, dy/d);
-            }
-
+            let v = (*primary_ball.position()-mouse_position )/d;
             let screen_size: f32 =
                 f64::from(screen_width().powi(2) + screen_height().powi(2)).sqrt() as f32;
             let limit: f32 = 30.0;

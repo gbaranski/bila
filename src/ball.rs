@@ -122,11 +122,6 @@ impl Ball {
     }
 
     pub fn update(&mut self, wall: Position) {
-        {
-            self.velocity.x = self.velocity.x.clamp(-MAX_SPEED, MAX_SPEED);
-            self.velocity.y = self.velocity.y.clamp(-MAX_SPEED, MAX_SPEED);
-        }
-
         // Apply friction
         {
             let drag: f32 = 0.97;
