@@ -5,7 +5,6 @@ use macroquad::color::Color;
 use macroquad::prelude::Vec2;
 
 pub const RADIUS: f32 = 32.0;
-pub const MAX_SPEED: f32 = 15.0;
 
 pub const TEXT_FONT_SIZE: u16 = 64;
 pub const TEXT_FONT_SCALE: f32 = 1.0;
