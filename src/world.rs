@@ -140,10 +140,6 @@ impl World {
             let scalar = (SPEED_LIMIT * 2.0f32 * ((d as f32) / screen_size)).min(SPEED_LIMIT);
             primary_ball.push(-v * scalar);
         }
-
-        if is_mouse_button_released(macroquad::input::MouseButton::Left){
-            println!("t");
-        }
     }
 
     /// Returns all collisions for the ball
