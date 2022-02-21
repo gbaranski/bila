@@ -17,7 +17,7 @@ jobs:
           submodules: true
 
       - name: Install dependencies
-        run: sudo apt-get -y install libasound2-dev libxi-dev libgl-dev
+        run: sudo apt-get libasound2-dev libxi-dev libgl-dev
 
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
