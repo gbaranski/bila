@@ -118,8 +118,7 @@ impl Ball {
                     -1.0 * self.velocity / dt
                 } else {
                     let direction = self.velocity.normalize();
-                    let friction = -1.0 * direction * FRICTION;
-                    friction
+                    -1.0 * direction * FRICTION // friction
                 }
             };
         }

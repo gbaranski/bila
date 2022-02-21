@@ -21,9 +21,8 @@ fn window_configuration() -> macroquad::window::Conf {
 #[macroquad::main(window_configuration)]
 async fn main() {
     let font = {
-        let font = macroquad::text::load_ttf_font_from_bytes(fonts::SOURCE_CODE_PRO_LIGHT)
-            .expect("couldn't load font");
-        font
+         macroquad::text::load_ttf_font_from_bytes(fonts::SOURCE_CODE_PRO_LIGHT)
+            .expect("couldn't load font")
     };
 
     let mut world = World::new(font);
