@@ -2,13 +2,15 @@ use crate::Acceleration;
 use crate::Position;
 use crate::Velocity;
 use macroquad::color::Color;
-use macroquad::prelude::Vec2;
+use macroquad::prelude::*;
 
 pub const RADIUS: f32 = 32.0;
 pub const FRICTION: f32 = 10.0;
 
 pub const TEXT_FONT_SIZE: u16 = 64;
 pub const TEXT_FONT_SCALE: f32 = 1.0;
+
+const PUSH_FACTOR: f32 = 70.0;
 
 pub type Index = usize;
 
@@ -133,8 +135,12 @@ impl Ball {
         }
     }
 
-    pub fn push(&mut self, v: Vec2) {
-        self.velocity += v;
+    pub fn push_to(&mut self, to: Vec2) {
+        let screen_diagonal = (screen_width().powi(2) + screen_height().powi(2)).sqrt();
+        let distance = self.position.distance(to);
+        let scalar = PUSH_FACTOR * distance / screen_diagonal;
+        let velocity = (self.position - to) / distance;
+        self.velocity -= velocity * scalar;
     }
 }
 

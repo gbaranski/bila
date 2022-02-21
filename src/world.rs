@@ -10,7 +10,6 @@ const STATS_LINE_SPACING: f32 = 10.0;
 const STATS_FONT_SIZE: u16 = 24;
 const STATS_FONT_COLOR: Color = WHITE;
 const STATS_FONT_SCALE: f32 = 1.0;
-const SPEED_LIMIT: f32 = 30.0;
 
 pub struct World {
     font: Font,
@@ -131,14 +130,9 @@ impl World {
         }
 
         if is_mouse_button_released(macroquad::input::MouseButton::Left) {
-            let mouse_position: Vec2 = macroquad::input::mouse_position().into();
             let primary_ball = self.primary_ball_mut();
-            let d = primary_ball.position().distance(mouse_position).max(0.001);
-            let v = (*primary_ball.position() - mouse_position) / d;
-            let screen_size: f32 =
-                f64::from(screen_width().powi(2) + screen_height().powi(2)).sqrt() as f32;
-            let scalar = (SPEED_LIMIT * 2.0f32 * ((d as f32) / screen_size)).min(SPEED_LIMIT);
-            primary_ball.push(-v * scalar);
+            let mouse_position: Vec2 = macroquad::input::mouse_position().into();
+            primary_ball.push_to(mouse_position);
         }
     }
 
