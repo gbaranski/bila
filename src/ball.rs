@@ -134,7 +134,7 @@ impl Ball {
     }
 
     pub fn push(&mut self, v: Vec2) {
-        self.velocity = v;
+        self.velocity += v;
     }
 }
 
