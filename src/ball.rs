@@ -2,14 +2,15 @@ use crate::Acceleration;
 use crate::Position;
 use crate::Velocity;
 use macroquad::color::Color;
-use macroquad::prelude::Vec2;
+use macroquad::prelude::*;
 
 pub const RADIUS: f32 = 32.0;
-pub const FRICTION: f32 = 0.2;
-pub const MAX_SPEED: f32 = 15.0;
+pub const FRICTION: f32 = 10.0;
 
 pub const TEXT_FONT_SIZE: u16 = 64;
 pub const TEXT_FONT_SCALE: f32 = 1.0;
+
+const PUSH_FACTOR: f32 = 70.0;
 
 pub type Index = usize;
 
@@ -22,6 +23,7 @@ pub struct Ball {
     position: Position,
     velocity: Velocity,
     acceleration: Acceleration,
+    mass: f32,
 }
 
 impl Ball {
@@ -35,6 +37,7 @@ impl Ball {
             position,
             velocity: Velocity::new(0.0, 0.0),
             acceleration: Acceleration::new(0.0, 0.0),
+            mass: 10.0,
         }
     }
 
@@ -59,11 +62,6 @@ impl Ball {
     #[inline]
     pub fn text_color(&self) -> &Color {
         &self.text_color
-    }
-
-    #[inline]
-    pub fn radius(&self) -> &f32 {
-        &self.radius
     }
 
     #[inline]
@@ -109,48 +107,40 @@ impl Ball {
         self.position -= position_delta / distance * (self.radius + other.radius - distance) * 0.5;
     }
 
-    pub fn reset_acceleration(&mut self) {
-        self.acceleration.x = 0.0;
-        self.acceleration.y = 0.0;
-    }
-
-    pub fn update(&mut self, wall: Position) {
-        // Apply acceleration
+    pub fn update(&mut self, dt: f32, wall: Position) {
+        // Set acceleration
         {
-            self.velocity.x += self.acceleration.x;
-            self.velocity.y += self.acceleration.y;
+            self.acceleration = if self.velocity == Vec2::ZERO {
+                Vec2::ZERO
+            } else {
+                let speed = self.velocity.length() / dt;
+                if speed <= FRICTION {
+                    -1.0 * self.velocity / dt
+                } else {
+                    let direction = self.velocity.normalize();
+                    let friction = -1.0 * direction * FRICTION;
+                    friction
+                }
+            };
         }
 
-        // Apply friction
-        {
-            if self.velocity.x > 0.0 {
-                self.velocity.x = (self.velocity.x - FRICTION).max(0.0);
-            } else if self.velocity.x < 0.0 {
-                self.velocity.x = (self.velocity.x + FRICTION).min(0.0);
-            }
-
-            if self.velocity.y > 0.0 {
-                self.velocity.y = (self.velocity.y - FRICTION).max(0.0);
-            } else if self.velocity.y < 0.0 {
-                self.velocity.y = (self.velocity.y + FRICTION).min(0.0);
-            }
-        }
-
-        // Limit the velocity
-        {
-            self.velocity.x = self.velocity.x.clamp(-MAX_SPEED, MAX_SPEED);
-            self.velocity.y = self.velocity.y.clamp(-MAX_SPEED, MAX_SPEED);
-        }
+        self.velocity += self.acceleration * dt;
 
         // Update position
         {
-            self.position.x = (self.position.x + self.velocity.x).clamp(self.radius, wall.x - self.radius);
-            self.position.y = (self.position.y + self.velocity.y).clamp(self.radius, wall.y - self.radius);
+            self.position.x =
+                (self.position.x + self.velocity.x).clamp(self.radius, wall.x - self.radius);
+            self.position.y =
+                (self.position.y + self.velocity.y).clamp(self.radius, wall.y - self.radius);
         }
     }
 
-    pub fn push(&mut self, v: Vec2) {
-        self.velocity += v;
+    pub fn push_to(&mut self, to: Vec2) {
+        let screen_diagonal = (screen_width().powi(2) + screen_height().powi(2)).sqrt();
+        let distance = self.position.distance(to);
+        let scalar = PUSH_FACTOR * distance / screen_diagonal;
+        let velocity = (self.position - to) / distance;
+        self.velocity -= velocity * scalar;
     }
 }
 

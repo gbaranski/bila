@@ -6,7 +6,6 @@ use macroquad::prelude::*;
 use std::convert::TryInto;
 
 const BALL_COUNT: usize = 8;
-
 const STATS_LINE_SPACING: f32 = 10.0;
 const STATS_FONT_SIZE: u16 = 24;
 const STATS_FONT_COLOR: Color = WHITE;
@@ -73,7 +72,7 @@ impl World {
             mouse_position.x,
             mouse_position.y,
             5.0,
-            Color::new(255.0, 0.0, 0.0, 0.8),
+            Color::new(155.0, 0.0, 0.0, 0.8),
         );
     }
 
@@ -130,19 +129,10 @@ impl World {
             std::process::exit(0);
         }
 
-
-        if is_mouse_button_down(macroquad::input::MouseButton::Left) {
-            let mouse_position: Vec2 = macroquad::input::mouse_position().into();
+        if is_mouse_button_released(macroquad::input::MouseButton::Left) {
             let primary_ball = self.primary_ball_mut();
-            let d = primary_ball.position().distance(mouse_position);
-            let dx = primary_ball.position().x - mouse_position.x;
-            let dy = primary_ball.position().y - mouse_position.y;
-
-            let vx = (dx / d).sin();
-            let vy = (dy / d).sin();
-            let v = Vec2::new(vx, vy);
-            dbg!(v);
-            primary_ball.push(-v * 2.0);
+            let mouse_position: Vec2 = macroquad::input::mouse_position().into();
+            primary_ball.push_to(mouse_position);
         }
     }
 
@@ -165,6 +155,7 @@ impl World {
     }
 
     pub async fn update(&mut self, tick: usize) {
+        let dt = get_frame_time();
         for ball in &mut self.balls {
             ball.set_default_colors();
         }
@@ -188,7 +179,7 @@ impl World {
 
         self.handle_keys();
         self.primary_ball_mut()
-            .update(Position::new(screen_width(), screen_height()));
+            .update(dt, Position::new(screen_width(), screen_height()));
         self.draw_arrow();
         self.draw_stats(tick);
 
