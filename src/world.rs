@@ -89,9 +89,9 @@ impl World {
     fn draw_stats(&self, tick: usize) {
         let mut current_y = 0.0;
         let mut draw_line = |s: &str| {
-            let size = measure_text(&s, Some(self.font), STATS_FONT_SIZE, STATS_FONT_SCALE);
+            let size = measure_text(s, Some(self.font), STATS_FONT_SIZE, STATS_FONT_SCALE);
             draw_text_ex(
-                &s,
+                s,
                 screen_width() - size.width,
                 current_y + size.height,
                 TextParams {
@@ -105,7 +105,7 @@ impl World {
             current_y += size.height + STATS_LINE_SPACING;
         };
         let primary_ball = self.primary_ball();
-        let collisions = self.ball_collisions(&primary_ball);
+        let collisions = self.ball_collisions(primary_ball);
         let position = primary_ball.position();
         let acceleration = primary_ball.acceleration();
         let velocity = primary_ball.velocity();
@@ -142,7 +142,7 @@ impl World {
             .iter()
             .filter(|other| other.index() != ball.index())
             .filter(|other| ball.does_collide(other))
-            .map(|other| other.index().clone())
+            .map(|other| *other.index())
             .collect()
     }
 
@@ -150,7 +150,7 @@ impl World {
     fn all_collisions(&self) -> Vec<(ball::Index, Vec<ball::Index>)> {
         self.balls
             .iter()
-            .map(|ball| (ball.index().clone(), self.ball_collisions(ball)))
+            .map(|ball| (*ball.index(), self.ball_collisions(ball)))
             .collect::<Vec<_>>()
     }
 
