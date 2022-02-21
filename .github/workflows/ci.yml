@@ -17,7 +17,7 @@ jobs:
           submodules: true
 
       - name: Install dependencies
-        run: sudo apt-get libasound2-dev libxi-dev libgl-dev
+        run: sudo apt-get install libdbus-1-dev
 
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
@@ -59,7 +59,7 @@ jobs:
           submodules: true
 
       - name: Install dependencies
-        run: sudo apt-get install libdbus-1-dev
+        run: sudo apt-get libasound2-dev libxi-dev libgl-dev
 
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
