@@ -22,7 +22,7 @@ pub struct Ball {
     velocity: Velocity,
     acceleration: Acceleration,
     mass: f32,
-    push_force: f32, 
+    push_force: f32,
 }
 
 impl Ball {
@@ -37,7 +37,7 @@ impl Ball {
             velocity: Velocity::new(0.0, 0.0),
             acceleration: Acceleration::new(0.0, 0.0),
             mass: 10.0,
-            push_force: 0.0, 
+            push_force: 0.0,
         }
     }
 
@@ -135,16 +135,16 @@ impl Ball {
     }
 
     pub fn push_to(&mut self, to: Vec2) {
-        let distance = self.position.distance(to);             
+        let distance = self.position.distance(to);
         if distance != 0.0 {
-            let dx=((to.x - self.position.x)/distance) as f32;
-            let dy=((to.y - self.position.y)/distance) as f32;
-            self.velocity = Vec2::new(dx, dy)*self.push_force;
+            let dx = ((to.x - self.position.x) / distance) as f32;
+            let dy = ((to.y - self.position.y) / distance) as f32;
+            self.velocity = Vec2::new(dx, dy) * self.push_force;
         }
     }
 
-    pub fn set_push_force(&mut self, force: f32){
-        self.push_force=force;
+    pub fn set_push_force(&mut self, force: f32) {
+        self.push_force = force;
     }
 }
 
