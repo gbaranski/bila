@@ -4,6 +4,7 @@ use crate::Position;
 
 use macroquad::prelude::*;
 use std::convert::TryInto;
+use std::time::SystemTime;
 
 const BALL_COUNT: usize = 8;
 const STATS_LINE_SPACING: f32 = 10.0;
@@ -14,6 +15,7 @@ const STATS_FONT_SCALE: f32 = 1.0;
 pub struct World {
     font: Font,
     balls: [Ball; BALL_COUNT],
+    mouse_button_press_time: SystemTime,
 }
 
 impl World {
@@ -33,6 +35,7 @@ impl World {
             .collect::<Vec<_>>();
 
         Self {
+            mouse_button_press_time: SystemTime::now(),
             font,
             balls: balls.try_into().unwrap(),
         }
@@ -124,6 +127,20 @@ impl World {
         ));
     }
 
+    fn scale_duration(&self, duration: u128) -> f32 {
+        (duration as f32 / 1000f32).clamp(0.0, 1.0)
+    }
+
+    fn draw_power_bar(&self, power: f32) {
+        draw_rectangle(
+            10.0,
+            screen_height() - 10.0,
+            20.0,
+            power * -150.0,
+            Color::new(255.0, 0.0, 0.0, 255.0),
+        );
+    }
+
     fn handle_keys(&mut self) {
         if is_key_pressed(KeyCode::Escape) {
             std::process::exit(0);
@@ -133,6 +150,21 @@ impl World {
             let primary_ball = self.primary_ball_mut();
             let mouse_position: Vec2 = macroquad::input::mouse_position().into();
             primary_ball.push_to(mouse_position);
+        }
+
+        if is_mouse_button_pressed(macroquad::input::MouseButton::Left) {
+            self.mouse_button_press_time = SystemTime::now();
+        }
+
+        if is_mouse_button_down(macroquad::input::MouseButton::Left) {
+            let duration = SystemTime::now()
+                .duration_since(self.mouse_button_press_time)
+                .expect("something gone wrong with your clock")
+                .as_millis();
+            let scaled_duration = self.scale_duration(duration);
+            self.draw_power_bar(scaled_duration);
+            self.primary_ball_mut()
+                .set_push_force(scaled_duration * 15.0);
         }
     }
 
