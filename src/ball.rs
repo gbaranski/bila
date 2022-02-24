@@ -140,7 +140,6 @@ impl Ball {
             let dx = ((to.x - self.position.x) / distance) as f32;
             let dy = ((to.y - self.position.y) / distance) as f32;
             self.velocity = Vec2::new(dx, dy) * self.push_force;
-            dbg!(dx, dy);
         }
     }
 
