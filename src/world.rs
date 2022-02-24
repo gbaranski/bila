@@ -133,9 +133,9 @@ impl World {
 
     fn draw_power_bar(&self, power: f32) {
         draw_rectangle(10.0, 
-                       10.0, 
+                       screen_height()-10.0, 
                        20.0, 
-                       power*150.0, 
+                       power*-150.0, 
                        Color::new(255.0,
                                   0.0,
                                   0.0,
@@ -165,6 +165,8 @@ impl World {
                 .as_millis();
             let scaled_duration=self.scale_duration(duration);
             self.draw_power_bar(scaled_duration);
+            self.primary_ball_mut().set_push_force(scaled_duration*15.0);
+
         }
     }
 
