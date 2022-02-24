@@ -4,7 +4,11 @@ use crate::Position;
 
 use macroquad::prelude::*;
 use std::convert::TryInto;
+<<<<<<< HEAD
 use std::time::{ SystemTime};
+=======
+use std::time::SystemTime;
+>>>>>>> e1bd3c2 (changed ball force formula)
 
 const BALL_COUNT: usize = 8;
 const STATS_LINE_SPACING: f32 = 10.0;
@@ -15,7 +19,11 @@ const STATS_FONT_SCALE: f32 = 1.0;
 pub struct World {
     font: Font,
     balls: [Ball; BALL_COUNT],
+<<<<<<< HEAD
     mouse_button_press_time: SystemTime,  
+=======
+    mouse_button_press_time: SystemTime,
+>>>>>>> e1bd3c2 (changed ball force formula)
 }
 
 impl World {
@@ -35,7 +43,11 @@ impl World {
         .collect::<Vec<_>>();
 
         Self {
+<<<<<<< HEAD
             mouse_button_press_time: SystemTime::now(), 
+=======
+            mouse_button_press_time: SystemTime::now(),
+>>>>>>> e1bd3c2 (changed ball force formula)
             font,
             balls: balls.try_into().unwrap(),
         }
@@ -144,6 +156,20 @@ impl World {
 
     }
 
+    fn scale_duration(&self, duration: u128) -> f32 {
+        (duration as f32 / 1000f32).clamp(0.0, 1.0)
+    }
+
+    fn draw_power_bar(&self, power: f32) {
+        draw_rectangle(
+            10.0,
+            10.0,
+            20.0,
+            power * 150.0,
+            Color::new(255.0, 0.0, 0.0, 255.0),
+        );
+    }
+
     fn handle_keys(&mut self) {
         if is_key_pressed(KeyCode::Escape) {
             std::process::exit(0);
@@ -167,7 +193,9 @@ impl World {
             self.draw_power_bar(scaled_duration);
             self.primary_ball_mut().set_push_force(scaled_duration*15.0);
 
+            self.mouse_button_press_time = SystemTime::now();
         }
+
     }
 
     /// Returns all collisions for the ball
