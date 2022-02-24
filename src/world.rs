@@ -4,6 +4,7 @@ use crate::Position;
 
 use macroquad::prelude::*;
 use std::convert::TryInto;
+use std::time::{ SystemTime};
 
 const BALL_COUNT: usize = 8;
 const STATS_LINE_SPACING: f32 = 10.0;
@@ -14,6 +15,7 @@ const STATS_FONT_SCALE: f32 = 1.0;
 pub struct World {
     font: Font,
     balls: [Ball; BALL_COUNT],
+    mouse_button_press_time: SystemTime,  
 }
 
 impl World {
@@ -26,13 +28,14 @@ impl World {
                     Position::new(
                         screen_width() * (n as f32 / BALL_COUNT as f32) as f32,
                         screen_height() / 2.0,
-                    )
+                        )
                 };
                 Ball::new(n, position)
             })
-            .collect::<Vec<_>>();
+        .collect::<Vec<_>>();
 
         Self {
+            mouse_button_press_time: SystemTime::now(), 
             font,
             balls: balls.try_into().unwrap(),
         }
@@ -46,7 +49,7 @@ impl World {
             Some(self.font),
             ball::TEXT_FONT_SIZE,
             ball::TEXT_FONT_SCALE,
-        );
+            );
         let position = ball.position();
         draw_circle(position.x, position.y, ball::RADIUS, *ball.color());
         draw_text_ex(
@@ -60,7 +63,7 @@ impl World {
                 font_scale_aspect: 1.0,
                 color: *ball.text_color(),
             },
-        );
+            );
     }
 
     fn draw_arrow(&self) {
@@ -73,7 +76,7 @@ impl World {
             mouse_position.y,
             5.0,
             Color::new(155.0, 0.0, 0.0, 0.8),
-        );
+            );
     }
 
     #[inline]
@@ -89,9 +92,9 @@ impl World {
     fn draw_stats(&self, tick: usize) {
         let mut current_y = 0.0;
         let mut draw_line = |s: &str| {
-            let size = measure_text(&s, Some(self.font), STATS_FONT_SIZE, STATS_FONT_SCALE);
+            let size = measure_text(s, Some(self.font), STATS_FONT_SIZE, STATS_FONT_SCALE);
             draw_text_ex(
-                &s,
+                s,
                 screen_width() - size.width,
                 current_y + size.height,
                 TextParams {
@@ -101,11 +104,11 @@ impl World {
                     font_scale_aspect: 1.0,
                     color: STATS_FONT_COLOR,
                 },
-            );
+                );
             current_y += size.height + STATS_LINE_SPACING;
         };
         let primary_ball = self.primary_ball();
-        let collisions = self.ball_collisions(&primary_ball);
+        let collisions = self.ball_collisions(primary_ball);
         let position = primary_ball.position();
         let acceleration = primary_ball.acceleration();
         let velocity = primary_ball.velocity();
@@ -115,13 +118,30 @@ impl World {
         draw_line(&format!("acc: ({} {})", acceleration.x, acceleration.y));
         draw_line(&format!("vel: ({} {})", velocity.x, velocity.y));
         draw_line(&format!(
-            "collisions: {}",
-            collisions
+                "collisions: {}",
+                collisions
                 .iter()
                 .map(|v| (v + 1).to_string())
                 .collect::<Vec<_>>()
                 .join(", ")
-        ));
+                ));
+    }
+
+    fn scale_duration(&self, duration: u128) -> f32{
+        (duration as f32/1000f32).clamp(0.0, 1.0)
+    }
+
+    fn draw_power_bar(&self, power: f32) {
+        draw_rectangle(10.0, 
+                       10.0, 
+                       20.0, 
+                       power*150.0, 
+                       Color::new(255.0,
+                                  0.0,
+                                  0.0,
+                                  255.0)
+                      );
+
     }
 
     fn handle_keys(&mut self) {
@@ -134,6 +154,18 @@ impl World {
             let mouse_position: Vec2 = macroquad::input::mouse_position().into();
             primary_ball.push_to(mouse_position);
         }
+
+        if is_mouse_button_pressed(macroquad::input::MouseButton::Left) {
+            self.mouse_button_press_time=SystemTime::now();
+        }
+
+        if is_mouse_button_down(macroquad::input::MouseButton::Left) {
+            let duration = SystemTime::now().duration_since(self.mouse_button_press_time)
+                .expect("something gone wrong with your clock")
+                .as_millis();
+            let scaled_duration=self.scale_duration(duration);
+            self.draw_power_bar(scaled_duration);
+        }
     }
 
     /// Returns all collisions for the ball
@@ -142,7 +174,7 @@ impl World {
             .iter()
             .filter(|other| other.index() != ball.index())
             .filter(|other| ball.does_collide(other))
-            .map(|other| other.index().clone())
+            .map(|other| *other.index())
             .collect()
     }
 
@@ -150,7 +182,7 @@ impl World {
     fn all_collisions(&self) -> Vec<(ball::Index, Vec<ball::Index>)> {
         self.balls
             .iter()
-            .map(|ball| (ball.index().clone(), self.ball_collisions(ball)))
+            .map(|ball| (*ball.index(), self.ball_collisions(ball)))
             .collect::<Vec<_>>()
     }
 
