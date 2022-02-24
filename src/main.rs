@@ -22,7 +22,7 @@ fn window_configuration() -> macroquad::window::Conf {
 async fn main() {
     let font = macroquad::text::load_ttf_font_from_bytes(fonts::SOURCE_CODE_PRO_LIGHT)
         .expect("couldn't load font");
-
+  
     let mut world = World::new(font);
 
     for i in 0.. {
